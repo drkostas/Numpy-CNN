@@ -1,0 +1,17 @@
+tag: project1
+neural-network:
+  - config:
+      num_hidden_layers: 1
+      activations:
+        - sigmoid
+        - sigmoid
+      loss_functions:
+        - mse
+    type: basic
+dataset: # multiple datasets can be defined
+  - config:
+      path: data/data.txt
+    type: txt # to load from file
+  - config:
+      name: xor
+    type: internal # to be generated inside the code

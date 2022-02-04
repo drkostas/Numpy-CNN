@@ -1,0 +1,5 @@
+setuptools~=52.0.0
+yaml-config-wrapper>=1.0.4
+termcolor-logger>=1.0.3
+numpy
+matplotlib

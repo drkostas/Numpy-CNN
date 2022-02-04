@@ -1,0 +1,10 @@
+2022-02-03 19:23:37 Main         ERROR    [1m[33m[Errno 2] No such file or directory: '/Users/gkos/Insync/delfinas7kostas@gmail.com/Google Drive/Projects/UTK/COSC525-Project1/logs/log.out'
+Traceback (most recent call last):
+  File "main.py", line 56, in <module>
+    main()
+  File "main.py", line 47, in main
+    ColorLogger.setup_logger(log_path=args.log, debug=args.debug, clear_log=True)
+  File "/Users/gkos/anaconda3/envs/cosc525_project1/lib/python3.8/site-packages/termcolor_logger/colored_logger.py", line 146, in setup_logger
+    open(cls.log_path, 'w').close()
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/gkos/Insync/delfinas7kostas@gmail.com/Google Drive/Projects/UTK/COSC525-Project1/logs/log.out'
+[0m
