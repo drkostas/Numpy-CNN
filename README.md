@@ -1,7 +1,5 @@
-# COSC525: Project 1<img src='https://github.com/drkostas/COSC525-Project1/blob/master/img/snek.png' align='right' width='180' height='104'>
+# COSC525: Project 1: Artificial Neural Networks
 
-[![CircleCI](https://circleci.com/gh/drkostas/COSC525-Project1/tree/master.svg?style=svg)](
-https://circleci.com/gh/drkostas/COSC525-Project1/tree/master)
 [![GitHub license](https://img.shields.io/badge/license-Apache-blue.svg)](
 https://github.com/drkostas/COSC525-Project1/blob/master/LICENSE)
 
@@ -10,46 +8,37 @@ https://github.com/drkostas/COSC525-Project1/blob/master/LICENSE)
 + [About](#about)
 + [Getting Started](#getting_started)
     + [Prerequisites](#prerequisites)
-+ [Installing, Testing, Building](#installing)
++ [Installing the requirements](#installing)
 + [Running the code](#run_locally)
     + [Execution Options](#execution_options)
-        + [COSC525Project1 Main](#src_main)
+        + [main.py](#src_main)
 + [Todo](#todo)
 + [License](#license)
 
 ## About <a name = "about"></a>
 
-Project 1 for the Deep Learning class (COSC 525). Involves the development of a FeedForward Neural
-Network.
+Project 1 for the Deep Learning course (COSC 525). Involves the development of a Neural Network.
 
-This project already includes the following packages:
-
-- [yaml-config-wrapper](https://pypi.org/project/yaml-config-wrapper/)
-- [termcolor-logger](https://pypi.org/project/termcolor-logger/)
-
-To get started, follow their respective instructions.
+The main code is located in the [main.py](main.py) file. The Neuron, FullyConnectedLayer, 
+and NeuralNetwork classes are located in the [src folder](src).
 
 ## Getting Started <a name = "getting_started"></a>
 
-These instructions will get you a copy of the project up and running on your local machine for
-development and testing purposes. See deployment for notes on how to deploy the project on a live
-system.
+These instructions will get you a copy of the project up and running on your local machine.
 
 ### Prerequisites <a name = "prerequisites"></a>
 
 You need to have a machine with Python > 3.6 and any Bash based shell (e.g. zsh) installed.
 
 ```ShellSession
-
-$ python3.6 -V
-Python 3.6
+$ python3.8 -V
+Python 3.8.2
 
 $ echo $SHELL
 /usr/bin/zsh
-
 ```
 
-## Installing, Testing, Building <a name = "installing"></a>
+## Installing the requirements <a name = "installing"></a>
 
 All the installation steps are being handled by the [Makefile](Makefile). You can either use conda or
 venv by setting the flag `env=<conda|venv>`. To load an env file use the
@@ -77,8 +66,7 @@ First, make sure you are in the correct virtual environment:
 $ conda activate cosc525_project1
 
 $ which python
-/home/drkostas/anaconda3/envs/src/bin/python
-
+/home/<user>/anaconda3/envs/src/bin/python
 ```
 
 #### main.py <a name = "src_main"></a>
@@ -87,18 +75,21 @@ Now, in order to run the code you can call the [main.py](main.py)
 directly.
 
 ```ShellSession
-$ python main.py --help
-usage: main.py -c CONFIG_FILE [-l LOG] [-d] [-h]
+$ python main.py -h
+usage: main.py -d DATASET -n NETWORK -c CONFIG_FILE [-l LOG] [-h]
 
 Project 1 for the Deep Learning class (COSC 525). Involves the development of a FeedForward Neural Network.
 
 Required Arguments:
+  -d DATASET, --dataset DATASET
+                        The datasets to train the network on. Options (defined in yml): [and, xor, class_example]
+  -n NETWORK, --network NETWORK
+                        The network configuration to use. Options (defined in yml): [1x1_net, 2x1_net, 2x2_net]
   -c CONFIG_FILE, --config-file CONFIG_FILE
-                        The configuration yml file
+                        The path to the yaml configuration file.
 
 Optional Arguments:
   -l LOG, --log LOG     Name of the output log file
-  -d, --debug           Enables the debug log messages
   -h, --help            Show this help message and exit
 ```
 

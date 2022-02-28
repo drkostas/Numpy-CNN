@@ -1,3 +1,6 @@
 # TODO
-See the [issues](https://github.com/drkostas/src/issues) too.
+
+See the [repo's issues](https://github.com/drkostas/src/issues).
+
 - [X] Initialize template repository
+- [X] Finish the Project

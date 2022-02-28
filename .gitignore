@@ -143,3 +143,7 @@ dmypy.json
 *.bz2
 *.zip
 *.7z
+
+# Custom
+logs/*
+/project1_empty.py
