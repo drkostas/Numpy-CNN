@@ -1,7 +1,7 @@
-# COSC525: Project 1: Artificial Neural Networks
+# COSC525: Project 2: Artificial Neural Networks
 
 [![GitHub license](https://img.shields.io/badge/license-Apache-blue.svg)](
-https://github.com/drkostas/COSC525-Project1/blob/master/LICENSE)
+https://github.com/drkostas/COSC525-Project2/blob/master/LICENSE)
 
 ## Table of Contents
 
@@ -17,7 +17,8 @@ https://github.com/drkostas/COSC525-Project1/blob/master/LICENSE)
 
 ## About <a name = "about"></a>
 
-Project 1 for the Deep Learning course (COSC 525). Involves the development of a Neural Network.
+Project 2 for the Deep Learning course (COSC 525). Involves the development of a 
+Convolutional Neural Network.
 
 The main code is located in the [main.py](main.py) file. The Neuron, FullyConnectedLayer, 
 and NeuralNetwork classes are located in the [src folder](src).
@@ -63,7 +64,7 @@ file directly or invoke its console script.
 First, make sure you are in the correct virtual environment:
 
 ```ShellSession
-$ conda activate cosc525_project1
+$ conda activate cosc525_project2
 
 $ which python
 /home/<user>/anaconda3/envs/src/bin/python
@@ -78,7 +79,7 @@ directly.
 $ python main.py -h
 usage: main.py -d DATASET -n NETWORK -c CONFIG_FILE [-l LOG] [-h]
 
-Project 1 for the Deep Learning class (COSC 525). Involves the development of a FeedForward Neural Network.
+Project 2 for the Deep Learning class (COSC 525). Involves the development of a Convolutional Neural Network.
 
 Required Arguments:
   -d DATASET, --dataset DATASET

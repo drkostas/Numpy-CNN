@@ -1,4 +1,4 @@
-tag: project1
+tag: project2
 neural-network: # List of neural networks
   - type: 1x1_net  # Name of the neural network (same used in the --network option)
     config: # Configuration of the neural network

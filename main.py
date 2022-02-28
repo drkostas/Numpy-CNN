@@ -15,8 +15,8 @@ def get_args() -> argparse.Namespace:
         argparse.Namespace:
     """
     parser = argparse.ArgumentParser(
-        description='Project 1 for the Deep Learning class (COSC 525). '
-                    'Involves the development of a FeedForward Neural Network.',
+        description='Project 2 for the Deep Learning class (COSC 525). '
+                    'Involves the development of a Convolutional Neural Network.',
         add_help=False)
     # Required Args
     required_args = parser.add_argument_group('Required Arguments')

@@ -1,4 +1,4 @@
-# Makefile for COSC525-Project1
+# Makefile for COSC525-Project2
 .ONESHELL:
 SHELL=/bin/bash
 PYTHON_VERSION=3.8
@@ -15,7 +15,7 @@ ifeq ($(env),venv)
 	DEACTIVATE_COMMAND="deactivate"
 else
 	# Use Conda
-	BASE=~/anaconda3/envs/cosc525_project1
+	BASE=~/anaconda3/envs/cosc525_project2
 	BIN=$(BASE)/bin
 	CREATE_COMMAND="conda create --prefix $(BASE) python=$(PYTHON_VERSION) -y"
 	DELETE_COMMAND="conda env remove -p $(BASE)"
@@ -60,7 +60,7 @@ install:
 	@echo
 	@echo "Installation Successful!"
 	@echo "To activate the conda environment run:"
-	@echo '    conda activate cosc525_project1'
+	@echo '    conda activate cosc525_project2'
 setup:
 	$(MAKE) clean
 	$(BIN)/pip install -r requirements.txt

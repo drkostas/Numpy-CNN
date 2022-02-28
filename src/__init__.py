@@ -1,4 +1,4 @@
-"""Top-level package for COSC525-Project1."""
+"""Top-level package for COSC525-Project2."""
 
 from termcolor_logger import ColorLogger
 from yaml_config_wrapper import Configuration, validate_json_schema
