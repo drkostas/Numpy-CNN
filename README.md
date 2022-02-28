@@ -1,4 +1,4 @@
-# COSC525: Project 2: Artificial Neural Networks
+# COSC525: Project 2: Convolutional Neural Networks
 
 [![GitHub license](https://img.shields.io/badge/license-Apache-blue.svg)](
 https://github.com/drkostas/COSC525-Project2/blob/master/LICENSE)
