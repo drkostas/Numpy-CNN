@@ -4,38 +4,33 @@ from typing import *
 
 
 class NeuralNetwork:
-    def __init__(self, num_layers: int, neurons_per_layer: List[int], activations: List[str],
-                 num_inputs: int, loss_function: str, learning_rate: float,
-                 weights: List[np.ndarray] = None):
+    def __init__(self, num_inputs: int, loss_function: str, learning_rate: float):
         """
         Initializes a neural network with the given parameters.
-        :param num_layers: The number of layers in the network.
-        :param neurons_per_layer: A list containing the number of neurons in each layer.
-        :param activations: A list containing the activation functions for each layer.
         :param num_inputs: The number of inputs to the network.
         :param loss_function: The loss function to use.
         :param learning_rate: The learning rate to use.
-        :param weights: A list containing the weights for each layer.
         """
-        self.num_layers = num_layers
-        self.neurons_per_layer = neurons_per_layer
-        self.activations = activations
-        self.num_inputs = num_inputs
+        self.num_inputs = num_inputs  # TODO: Make this dynamically inferred.
         self.loss_function = loss_function
         self.learning_rate = learning_rate
-        # Initialize the weights and biases for each layer.
-        if weights is None:
-            weights = [(np.random.randn(neurons_per_layer[i],
-                                        (num_inputs + 1) if i == 0 else (
-                                                                        neurons_per_layer[i - 1]) + 1))
-                       for i in range(0, num_layers)]
-
         # Initialize the layers
         self.layers = []
-        for i in range(num_layers):
-            self.layers.append(FullyConnectedLayer(neurons_per_layer[i], self.activations[i],
-                                                   num_inputs if i == 0 else neurons_per_layer[i - 1],
-                                                   self.learning_rate, weights[i]))
+
+    def addLayer(self, num_neurons: int, activation: str, weights: np.ndarray = None):
+        """ Adds a layer to the network.
+        :param num_neurons: The number of neurons in the new layer.
+        :param activation: The activation function for the new layer.
+        :param weights: The weights for the new layer.
+        :return: None
+        """
+        num_inputs = self.num_inputs if len(self.layers) == 0 \
+            else self.layers[-1].neurons_per_layer
+        if weights is None:
+            weights = np.random.randn(num_neurons, num_inputs + 1)
+        layer = FullyConnectedLayer(num_neurons, activation, num_inputs,
+                                    self.learning_rate, weights)
+        self.layers.append(layer)
 
     def calculate(self, inputs: np.ndarray) -> np.ndarray:
         """
@@ -74,8 +69,8 @@ class NeuralNetwork:
         :param targets: The targets for the outputs.
         :return: The cross entropy loss of the network.
         """
-        div_by_N = 1/outputs.shape[0]
-        sums = np.sum(targets * np.log(outputs)+(1-targets)*np.log(1-outputs))
+        div_by_N = 1 / outputs.shape[0]
+        sums = np.sum(targets * np.log(outputs) + (1 - targets) * np.log(1 - outputs))
         return div_by_N * (-sums)
 
     @staticmethod
@@ -111,8 +106,8 @@ class NeuralNetwork:
         :param targets: The targets for the outputs.
         :return: The derivative of the cross entropy loss of the network.
         """
-        first_term = targets/outputs
-        second_term = (1-targets)/(1-outputs)
+        first_term = targets / outputs
+        second_term = (1 - targets) / (1 - outputs)
         return -first_term + second_term
 
     @staticmethod

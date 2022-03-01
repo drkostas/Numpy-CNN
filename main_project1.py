@@ -117,12 +117,12 @@ def main():
         inputs = np.array(dataset_conf['inputs'])
         outputs = np.array(dataset_conf['outputs'])
         # Initialize the network
-        netWork = NeuralNetwork(num_layers=len(nn_conf['neurons_per_layer']),
-                                neurons_per_layer=nn_conf['neurons_per_layer'],
-                                activations=nn_conf['activations'],
-                                num_inputs=inputs.shape[1],
+        netWork = NeuralNetwork(num_inputs=inputs.shape[1],
                                 loss_function=nn_conf['loss_function'],
                                 learning_rate=nn_conf['learning_rate'])
+        # Add the layers
+        for num_neurons, activation in zip(nn_conf['neurons_per_layer'], nn_conf['activations']):
+            netWork.addLayer(num_neurons=num_neurons, activation=activation)
         # Train the network for the given number of epochs
         for epoch in range(nn_conf['epochs']):
             netWork.train(inputs, outputs)  # Train the network
@@ -140,13 +140,13 @@ def main():
         desired_outputs = np.array(dataset_conf['desired_outputs'])
         weights = [np.array(weight) for weight in dataset_conf['weights']]
         # Initialize the network using the predefined weights and biases
-        netWork = NeuralNetwork(num_layers=len(nn_conf['neurons_per_layer']),
-                                neurons_per_layer=nn_conf['neurons_per_layer'],
-                                activations=nn_conf['activations'],
-                                num_inputs=2,
+        netWork = NeuralNetwork(num_inputs=2,
                                 loss_function=nn_conf['loss_function'],
-                                learning_rate=nn_conf['learning_rate'],
-                                weights=weights)  # Give the network the weights and biases
+                                learning_rate=nn_conf['learning_rate'])  # Give the network the weights and biases
+        # Add the layers
+        for num_neurons, activation, weights_ in \
+                zip(nn_conf['neurons_per_layer'], nn_conf['activations'], weights):
+            netWork.addLayer(num_neurons=num_neurons, activation=activation, weights=weights_)
         # Print the network inputs and weights before training
         print("Pre-training Inputs:")
         print(f"{inputs[0]}")

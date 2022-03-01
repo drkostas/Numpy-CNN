@@ -116,12 +116,13 @@ def main():
     inputs = np.array(dataset_conf['inputs'])
     outputs = np.array(dataset_conf['outputs'])
     # Initialize the network
-    netWork = NeuralNetwork(num_layers=len(nn_conf['neurons_per_layer']),
-                            neurons_per_layer=nn_conf['neurons_per_layer'],
-                            activations=nn_conf['activations'],
-                            num_inputs=inputs.shape[1],
+    # Initialize the network
+    netWork = NeuralNetwork(num_inputs=inputs.shape[1],
                             loss_function=nn_conf['loss_function'],
                             learning_rate=nn_conf['learning_rate'])
+    # Add the layers
+    for num_neurons, activation in zip(nn_conf['neurons_per_layer'], nn_conf['activations']):
+        netWork.addLayer(num_neurons=num_neurons, activation=activation)
     # Train the network for the given number of epochs
     for epoch in range(nn_conf['epochs']):
         netWork.train(inputs, outputs)  # Train the network
