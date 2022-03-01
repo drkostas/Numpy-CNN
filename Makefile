@@ -55,6 +55,8 @@ help:
 install:
 	$(MAKE) delete_env
 	$(MAKE) create_env
+	$(MAKE) clean
+	$(MAKE) requirements
 	$(MAKE) setup
 	@echo -e "\033[0;31m############################################"
 	@echo
@@ -62,13 +64,13 @@ install:
 	@echo "To activate the conda environment run:"
 	@echo '    conda activate cosc525_project2'
 setup:
-	$(MAKE) clean
-	$(BIN)/pip install -r requirements.txt
+	$(BIN)/pip install setuptools
 	$(BIN)/python setup.py install
 setup_dev:
-	$(MAKE) clean
-	$(BIN)/pip install -r requirements.txt
+	$(BIN)/pip install setuptools
 	$(BIN)/python setup.py install --dev
+requirements:
+	$(BIN)/pip install -r requirements.txt
 clean:
 	$(BIN)/python setup.py clean
 create_env:
@@ -78,4 +80,4 @@ delete_env:
 	@echo "Deleting virtual environment.."
 	@eval $(DELETE_COMMAND)
 
-.PHONY: help install clean delete_env create_env setup
+.PHONY: help install clean delete_env create_env setup requirements setup_dev

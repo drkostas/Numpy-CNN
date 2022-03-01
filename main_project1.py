@@ -12,8 +12,8 @@ def get_args() -> argparse.Namespace:
         argparse.Namespace:
     """
     parser = argparse.ArgumentParser(
-        description='Project 2 for the Deep Learning class (COSC 525). '
-                    'Involves the development of a Convolutional Neural Network.',
+        description='Project 1 for the Deep Learning class (COSC 525). '
+                    'Involves the development of a Feed-Forward Neural Network.',
         add_help=False)
     # Required Args
     required_args = parser.add_argument_group('Required Arguments')
@@ -112,27 +112,68 @@ def main():
     # ------- Start of Code ------- #
     print()
     print(f'Training the `{nn_type}` network on the `{dataset_type}` dataset.')
-    # Train the network
-    inputs = np.array(dataset_conf['inputs'])
-    outputs = np.array(dataset_conf['outputs'])
-    # Initialize the network
-    netWork = NeuralNetwork(num_layers=len(nn_conf['neurons_per_layer']),
-                            neurons_per_layer=nn_conf['neurons_per_layer'],
-                            activations=nn_conf['activations'],
-                            num_inputs=inputs.shape[1],
-                            loss_function=nn_conf['loss_function'],
-                            learning_rate=nn_conf['learning_rate'])
-    # Train the network for the given number of epochs
-    for epoch in range(nn_conf['epochs']):
-        netWork.train(inputs, outputs)  # Train the network
-        loss = netWork.calculate_loss(inputs, outputs)  # Calculate the loss
-        if epoch % nn_conf['print_every'] == 0:
-            print(f"Epoch: {epoch} Loss: {loss}")
-    print(f"Epoch: {nn_conf['epochs']} Loss: {loss}")
-    # Test on the predictions
-    print(f'Predictions on the {dataset_type} dataset')
-    for inp, outp in zip(inputs, outputs):
-        print(f"True Output: {outp} Prediction: {netWork.calculate(inp)[0]}")
+    if args.dataset != 'class_example':  # XOR and AND cases
+        # Train the network
+        inputs = np.array(dataset_conf['inputs'])
+        outputs = np.array(dataset_conf['outputs'])
+        # Initialize the network
+        netWork = NeuralNetwork(num_layers=len(nn_conf['neurons_per_layer']),
+                                neurons_per_layer=nn_conf['neurons_per_layer'],
+                                activations=nn_conf['activations'],
+                                num_inputs=inputs.shape[1],
+                                loss_function=nn_conf['loss_function'],
+                                learning_rate=nn_conf['learning_rate'])
+        # Train the network for the given number of epochs
+        for epoch in range(nn_conf['epochs']):
+            netWork.train(inputs, outputs)  # Train the network
+            loss = netWork.calculate_loss(inputs, outputs)  # Calculate the loss
+            if epoch % nn_conf['print_every'] == 0:
+                print(f"Epoch: {epoch} Loss: {loss}")
+        print(f"Epoch: {nn_conf['epochs']} Loss: {loss}")
+        # Test on the predictions
+        print(f'Predictions on the {dataset_type} dataset')
+        for inp, outp in zip(inputs, outputs):
+            print(f"True Output: {outp} Prediction: {netWork.calculate(inp)[0]}")
+    else:  # Class Example
+        # Set up the weights and biases based on the class example
+        inputs = [np.array(dataset_conf['inputs'])]
+        desired_outputs = np.array(dataset_conf['desired_outputs'])
+        weights = [np.array(weight) for weight in dataset_conf['weights']]
+        # Initialize the network using the predefined weights and biases
+        netWork = NeuralNetwork(num_layers=len(nn_conf['neurons_per_layer']),
+                                neurons_per_layer=nn_conf['neurons_per_layer'],
+                                activations=nn_conf['activations'],
+                                num_inputs=2,
+                                loss_function=nn_conf['loss_function'],
+                                learning_rate=nn_conf['learning_rate'],
+                                weights=weights)  # Give the network the weights and biases
+        # Print the network inputs and weights before training
+        print("Pre-training Inputs:")
+        print(f"{inputs[0]}")
+        print("Pre-training Weights:")
+        print(f"{netWork.layers[0].neurons[0].weights} (h1) x "
+              "{netWork.layers[1].neurons[0].weights} (O1)")
+        print(f"{netWork.layers[0].neurons[1].weights} (h1) x "
+              "{netWork.layers[1].neurons[1].weights} (O1)")
+        # Activate the network
+        outputs = netWork.calculate(inputs[0])  # Feed-forward the network
+        print(f"Outputs after calling `activate()`:")
+        print(f"{outputs}")
+        # Calculate the wdeltas - single step of backpropagation
+        wdeltas = [netWork.loss_derivative(np.array(outputs), desired_outputs)]
+        for j in range(len(netWork.layers) - 1, -1, -1):
+            wdeltas = netWork.layers[j].calculate_wdeltas(wdeltas)
+        # Print the wdeltas, the weights, and the outputs after backpropagation
+        print("Wdeltas after calling `calculate_wdeltas()`:")
+        print(f"{wdeltas}")
+        print("Weights after a single step of back-propagation:")
+        print(f"{netWork.layers[0].neurons[0].weights} (h1) x "
+              "{netWork.layers[1].neurons[0].weights} (O1)")
+        print(f"{netWork.layers[0].neurons[1].weights} (h1) x "
+              "{netWork.layers[1].neurons[1].weights} (O1)")
+        outputs = netWork.calculate(inputs[0])
+        print("Post-training Outputs:")
+        print(f"{outputs}")
 
 
 if __name__ == '__main__':
