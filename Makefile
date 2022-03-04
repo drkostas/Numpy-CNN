@@ -1,7 +1,7 @@
 # Makefile for COSC525-Project2
 .ONESHELL:
 SHELL=/bin/bash
-PYTHON_VERSION=3.8
+PYTHON_VERSION=3.7
 
 # You can use either venv (venv) or conda env
 # by specifying the correct argument (env=<conda, venv>)

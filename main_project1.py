@@ -142,7 +142,7 @@ def main():
         # Initialize the network using the predefined weights and biases
         netWork = NeuralNetwork(num_inputs=2,
                                 loss_function=nn_conf['loss_function'],
-                                learning_rate=nn_conf['learning_rate'])  # Give the network the weights and biases
+                                learning_rate=nn_conf['learning_rate'])
         # Add the layers
         for num_neurons, activation, weights_ in \
                 zip(nn_conf['neurons_per_layer'], nn_conf['activations'], weights):
