@@ -22,12 +22,16 @@ class ConvolutionalLayer:
         self.weights = weights
 
         # Initialize neurons
-        self.neurons = []
+        self.kernels = []
+        for kernel in range(num_kernels):
+            neurons  = []
+            for neuron_ind_x in range(input_dimensions-kernel_size+1):
+                neuron_row = []
+                for neuron_ind_y in range(input_dimensions-kernel_size+1):
+                    neuron_row.append(self.activation, self.num_inputs, lr, weights[kernel])
+                neurons.append(neuron_row)
+            self.kernels.append(neurons)
 
-        for neuron_ind_x in range(input_dimensions-kernel_size+1):
-            neuron_row = []
-            for neuron_ind_y in range(input_dimensions-kernel_size+1):
-                neuron_row.append(self.activation, self.num_inputs, lr, weights)
         self.lr = lr
 
     def calculate(self, inputs: np.ndarray) -> List:
