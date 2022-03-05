@@ -1,4 +1,3 @@
-
 from src import FullyConnectedLayer
 from src import ConvolutionalLayer
 import numpy as np
@@ -26,31 +25,30 @@ class NeuralNetwork:
         :param weights: The weights for the new layer.
         :return: None
         """
-        num_inputs = (self.input_size*self.input_size) if len(self.layers) == 0 \
-            else self.layers[-1].neurons_per_layer
+        num_inputs = self.input_size if len(self.layers) == 0 else self.layers[-1].neurons_per_layer
         if weights is None:
             weights = np.random.randn(num_neurons, num_inputs + 1)
         layer = FullyConnectedLayer(num_neurons, activation, num_inputs,
                                     self.learning_rate, weights)
         self.layers.append(layer)
 
-    def addConvLayer(self, num_kernals: int, kernal_size: int, activation: str, weights: np.ndarray = None):
+    def addConvLayer(self, num_kernels: int, kernel_size: int, activation: str,
+                     weights: np.ndarray = None):
         """ Adds a layer to the network.
-        :param num_kernals: The number of neurons in the new layer.
-        :param kernal_size: The size of the kernals
+        :param num_kernels: The number of neurons in the new layer.
+        :param kernel_size: The size of the kernels
         :param activation: The activation function for the new layer.
         :param weights: The weights for the new layer.
         :return: None
         """
-        input_width =  (self.input_size)  if len(self.layers) == 0 \
-            else self.layers[-1].output_size
+        input_width = self.input_size if len(self.layers) == 0 else self.layers[-1].output_size
         input_depth = 1 if len(self.layers) == 0 \
             else self.layers[-1].num_kernels
         if weights is None:
-            weights = [np.random.randn(kernal_size, kernal_size) for i in range(num_kernals)]
-        layer = ConvolutionalLayer(num_kernals,kernal_size,activation,[input_width,input_depth],self.learning_rate,weights)
+            weights = [np.random.randn(kernel_size, kernel_size) for _ in range(num_kernels)]
+        layer = ConvolutionalLayer(num_kernels, kernel_size, activation, [input_width, input_depth],
+                                   self.learning_rate, weights)
         self.layers.append(layer)
-
 
     def calculate(self, inputs: np.ndarray) -> np.ndarray:
         """

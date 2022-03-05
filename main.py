@@ -1,10 +1,7 @@
 import traceback
 import argparse
-import sys
 import numpy as np
-from src import NeuralNetwork
-#sys.path.insert(1, 'examples')
-#from parameters import generateExample2
+from src import NeuralNetwork, generateExample2
 from typing import *
 
 
@@ -22,10 +19,10 @@ def get_args() -> argparse.Namespace:
     required_args = parser.add_argument_group('Required Arguments')
     required_args.add_argument('-d', '--dataset', required=True,
                                help="The datasets to train the network on. "
-                                    "Options (defined in yml): [and, xor, class_example]")
+                                    "Options: [and, xor, class_example]")
     required_args.add_argument('-n', '--network', required=True,
                                help="The network configuration to use. "
-                                    "Options (defined in yml): [1x1_net, 2x1_net, 2x2_net]")
+                                    "Options: [1x1_net, 2x1_net, 2x2_net]")
     # Optional args
     optional_args = parser.add_argument_group('Optional Arguments')
     optional_args.add_argument("-h", "--help", action="help", help="Show this help message and exit")
@@ -101,7 +98,7 @@ def main():
     """This is the main function of main.py
 
     Example:
-        python main.py --dataset xor --network 2x1_net --config confs/main_conf.yml
+        python main.py --dataset xor --network 2x1_net
     """
 
     # Initializing
@@ -117,8 +114,7 @@ def main():
     netWork = NeuralNetwork(3,
                             "cross_entropy",
                             .1)
-    netWork.addConvLayer(2,2,"sigmoid")
-
+    netWork.addConvLayer(2, 2, "sigmoid")
 
     """
     print(f'Training the `{nn_type}` network on the `{dataset_type}` dataset.')

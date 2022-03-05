@@ -67,9 +67,6 @@ $ conda install --file requirements.txt # or $ make requirements
 
 ## Running the code <a name = "run_locally"></a>
 
-In order to run the code, you will only need to change the yml file if you need to, and either run its
-file directly or invoke its console script.
-
 ### Execution Options <a name = "execution_options"></a>
 
 First, make sure you are in the correct virtual environment:
@@ -94,9 +91,9 @@ Project 2 for the Deep Learning class (COSC 525). Involves the development of a 
 
 Required Arguments:
   -d DATASET, --dataset DATASET
-                        The datasets to train the network on. Options (defined in yml): [and, xor, class_example]
+                        The datasets to train the network on. Options: [and, xor, class_example]
   -n NETWORK, --network NETWORK
-                        The network configuration to use. Options (defined in yml): [1x1_net, 2x1_net, 2x2_net]
+                        The network configuration to use. Options: [1x1_net, 2x1_net, 2x2_net]
 
 Optional Arguments:
   -h, --help            Show this help message and exit
