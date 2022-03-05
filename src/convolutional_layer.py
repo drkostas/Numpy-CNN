@@ -52,9 +52,13 @@ class ConvolutionalLayer:
         """
         outputs = []
         for kernel_ind, kernel in enumerate(self.kernels):
+            kernel_output = []
             for kernel_x, kernel_row in enumerate(kernel):
+                kernel_x_output = []
                 for kernel_y, neuron in enumerate(kernel_row):
-                    outputs.append(neuron.calculate(inputs))  # Calculate output of each neuron
+                    kernel_x_output.append(neuron.calculate(inputs))  # Calculate output of each neuron
+                kernel_output.append(kernel_x_output)
+            outputs.append(kernel_output)
         return outputs
 
     def calculate_wdeltas(self, wdeltas_next: List) -> List:
