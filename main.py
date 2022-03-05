@@ -1,7 +1,10 @@
 import traceback
 import argparse
+import sys
 import numpy as np
 from src import NeuralNetwork
+#sys.path.insert(1, 'examples')
+#from parameters import generateExample2
 from typing import *
 
 
@@ -102,15 +105,22 @@ def main():
     """
 
     # Initializing
-    args = get_args()
+    ##args = get_args()
     # Load the configurations
-    nn_type = args.network
-    nn_conf = get_network_config(nn_type)
-    dataset_type = args.dataset
-    dataset_conf = get_dataset_config(dataset_type)
+    ##nn_type = args.network
+    ##nn_conf = get_network_config(nn_type)
+    ##dataset_type = args.dataset
+    ##dataset_conf = get_dataset_config(dataset_type)
 
     # ------- Start of Code ------- #
-    print()
+    l1k1, l1k2, l1b1, l1b2, l2c1, l2c2, l2b, l3, l3b, input, output = generateExample2()
+    netWork = NeuralNetwork(3,
+                            "cross_entropy",
+                            .1)
+    netWork.addConvLayer(2,2,"sigmoid")
+
+
+    """
     print(f'Training the `{nn_type}` network on the `{dataset_type}` dataset.')
     # Train the network
     inputs = np.array(dataset_conf['inputs'])
@@ -134,6 +144,7 @@ def main():
     print(f'Predictions on the {dataset_type} dataset')
     for inp, outp in zip(inputs, outputs):
         print(f"True Output: {outp} Prediction: {netWork.calculate(inp)[0]}")
+        """
 
 
 if __name__ == '__main__':

@@ -1,36 +1,56 @@
+
 from src import FullyConnectedLayer
+from src import ConvolutionalLayer
 import numpy as np
 from typing import *
 
 
 class NeuralNetwork:
-    def __init__(self, num_inputs: int, loss_function: str, learning_rate: float):
+    def __init__(self, input_size: int, loss_function: str, learning_rate: float):
         """
         Initializes a neural network with the given parameters.
-        :param num_inputs: The number of inputs to the network.
+        :param input_size: The width/height of the input.
         :param loss_function: The loss function to use.
         :param learning_rate: The learning rate to use.
         """
-        self.num_inputs = num_inputs  # TODO: Make this dynamically inferred.
+        self.input_size = input_size  # TODO: Make this dynamically inferred.
         self.loss_function = loss_function
         self.learning_rate = learning_rate
         # Initialize the layers
         self.layers = []
 
-    def addLayer(self, num_neurons: int, activation: str, weights: np.ndarray = None):
+    def addFullyConnectedLayer(self, num_neurons: int, activation: str, weights: np.ndarray = None):
         """ Adds a layer to the network.
         :param num_neurons: The number of neurons in the new layer.
         :param activation: The activation function for the new layer.
         :param weights: The weights for the new layer.
         :return: None
         """
-        num_inputs = self.num_inputs if len(self.layers) == 0 \
+        num_inputs = (self.input_size*self.input_size) if len(self.layers) == 0 \
             else self.layers[-1].neurons_per_layer
         if weights is None:
             weights = np.random.randn(num_neurons, num_inputs + 1)
         layer = FullyConnectedLayer(num_neurons, activation, num_inputs,
                                     self.learning_rate, weights)
         self.layers.append(layer)
+
+    def addConvLayer(self, num_kernals: int, kernal_size: int, activation: str, weights: np.ndarray = None):
+        """ Adds a layer to the network.
+        :param num_kernals: The number of neurons in the new layer.
+        :param kernal_size: The size of the kernals
+        :param activation: The activation function for the new layer.
+        :param weights: The weights for the new layer.
+        :return: None
+        """
+        input_width =  (self.input_size)  if len(self.layers) == 0 \
+            else self.layers[-1].output_size
+        input_depth = 1 if len(self.layers) == 0 \
+            else self.layers[-1].num_kernels
+        if weights is None:
+            weights = [np.random.randn(kernal_size, kernal_size) for i in range(num_kernals)]
+        layer = ConvolutionalLayer(num_kernals,kernal_size,activation,[input_width,input_depth],self.learning_rate,weights)
+        self.layers.append(layer)
+
 
     def calculate(self, inputs: np.ndarray) -> np.ndarray:
         """
