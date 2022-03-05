@@ -22,6 +22,8 @@ class Neuron:
             self.output = self.net
         elif self.activation == "logistic":
             self.output = 1 / (1 + np.exp(-self.net))
+        else:
+            raise ValueError(f"Activation function not recognized: {self.activation}")
         return self.output
 
     # Receives a vector of inputs and determines the nodes output using
