@@ -71,18 +71,19 @@ class NeuralNetwork:
         if len(self.layers) == 0:
             if len(self.input_size) == 2:
                 input_height, input_width = self.input_size  # Height x Width
-                input_depth = 1  # In theory this can be > 1 e.g. for rgb inputs
+                input_channels = 1  # In theory this can be > 1 e.g. for rgb inputs
             else:
                 raise ValueError(f"Invalid number of inputs when first layer is FC: "
                                  f"{self.input_size}")
         else:
             input_height, input_width = self.layers[-1].output_size
-            input_depth = self.layers[-1].num_kernels
+            input_channels = self.layers[-1].num_kernels
         if weights is None:
             weights = [np.random.randn(kernel_size, kernel_size) for _ in range(num_kernels)]
         layer = ConvolutionalLayer(num_kernels=num_kernels, kernel_size=kernel_size,
+                                   input_channels=input_channels,
+                                   input_dimensions=(input_height, input_width),
                                    activation=activation,
-                                   input_dimensions=(input_height, input_width, input_depth),
                                    lr=self.learning_rate, weights=weights)
         self.layers.append(layer)
 
