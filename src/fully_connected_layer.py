@@ -14,7 +14,10 @@ class FullyConnectedLayer:
         :param lr: Learning rate
         :param weights: Weights of the layer
         """
-        self.neurons_per_layer = neurons_per_layer
+        if isinstance(neurons_per_layer, int):
+            self.neurons_per_layer = neurons_per_layer
+        else:
+            raise ValueError(f"Invalid type of neurons per layer for FC layer: {neurons_per_layer}")
         self.activation = activation
         self.num_inputs = num_inputs
 

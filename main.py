@@ -102,18 +102,16 @@ def main():
     """
 
     # Initializing
-    ##args = get_args()
+    args = get_args()
     # Load the configurations
-    ##nn_type = args.network
-    ##nn_conf = get_network_config(nn_type)
-    ##dataset_type = args.dataset
-    ##dataset_conf = get_dataset_config(dataset_type)
+    nn_type = args.network
+    nn_conf = get_network_config(nn_type)
+    dataset_type = args.dataset
+    dataset_conf = get_dataset_config(dataset_type)
 
     # ------- Start of Code ------- #
     l1k1, l1k2, l1b1, l1b2, l2c1, l2c2, l2b, l3, l3b, input, output = generateExample2()
-    netWork = NeuralNetwork(3,
-                            "cross_entropy",
-                            .1)
+    netWork = NeuralNetwork(input_size=3, "cross_entropy", .1)
     netWork.addConvLayer(2, 2, "sigmoid")
 
     """

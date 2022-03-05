@@ -5,14 +5,16 @@ from typing import *
 
 
 class NeuralNetwork:
-    def __init__(self, input_size: int, loss_function: str, learning_rate: float):
+    def __init__(self, input_size: Union[int, Tuple], loss_function: str, learning_rate: float):
         """
         Initializes a neural network with the given parameters.
         :param input_size: The width/height of the input.
         :param loss_function: The loss function to use.
         :param learning_rate: The learning rate to use.
         """
-        self.input_size = input_size  # TODO: Make this dynamically inferred.
+        if isinstance(input_size, int):
+            input_size = (input_size,)
+        self.input_size = input_size
         self.loss_function = loss_function
         self.learning_rate = learning_rate
         # Initialize the layers
@@ -25,7 +27,17 @@ class NeuralNetwork:
         :param weights: The weights for the new layer.
         :return: None
         """
-        num_inputs = self.input_size if len(self.layers) == 0 else self.layers[-1].neurons_per_layer
+        if len(self.layers) == 0:
+            if isinstance(self.input_size, int):
+                num_inputs = self.input_size
+            else:
+                if len(self.input_size) == 1:
+                    num_inputs = self.input_size[0]
+                else:
+                    raise ValueError(f"Invalid number of inputs when first layer is FC: "
+                                     f"{self.input_size}")
+        else:
+            num_inputs = self.layers[-1].neurons_per_layer
         if weights is None:
             weights = np.random.randn(num_neurons, num_inputs + 1)
         layer = FullyConnectedLayer(num_neurons, activation, num_inputs,
