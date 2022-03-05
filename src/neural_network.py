@@ -20,6 +20,20 @@ class NeuralNetwork:
         # Initialize the layers
         self.layers = []
 
+    def addLayer(self, layer_type: str, **kwargs):
+        """
+        Adds a layer to the network.
+        :param layer_type: The type of layer to add.
+        :param kwargs: The arguments for the layer.
+        :return: None
+        """
+        if layer_type == "convolutional":
+            self.addConvLayer(**kwargs)
+        elif layer_type == "fully_connected":
+            self.addFullyConnectedLayer(**kwargs)
+        else:
+            raise ValueError("Invalid layer type.")
+
     def addFullyConnectedLayer(self, num_neurons: int, activation: str, weights: np.ndarray = None):
         """ Adds a layer to the network.
         :param num_neurons: The number of neurons in the new layer.
@@ -28,14 +42,11 @@ class NeuralNetwork:
         :return: None
         """
         if len(self.layers) == 0:
-            if isinstance(self.input_size, int):
-                num_inputs = self.input_size
+            if len(self.input_size) == 1:
+                num_inputs = self.input_size[0]
             else:
-                if len(self.input_size) == 1:
-                    num_inputs = self.input_size[0]
-                else:
-                    raise ValueError(f"Invalid number of inputs when first layer is FC: "
-                                     f"{self.input_size}")
+                raise ValueError(f"Invalid input size when first layer is FC: "
+                                 f"{self.input_size}")
         else:
             num_inputs = self.layers[-1].neurons_per_layer
         if weights is None:
@@ -45,21 +56,32 @@ class NeuralNetwork:
         self.layers.append(layer)
 
     def addConvLayer(self, num_kernels: int, kernel_size: int, activation: str,
-                     weights: np.ndarray = None):
+                     stride: int, padding: str, weights: np.ndarray = None):
         """ Adds a layer to the network.
         :param num_kernels: The number of neurons in the new layer.
         :param kernel_size: The size of the kernels
         :param activation: The activation function for the new layer.
+        :param stride: The stride for the convolution.
+        :param padding: The padding for the convolution.
         :param weights: The weights for the new layer.
         :return: None
         """
-        input_width = self.input_size if len(self.layers) == 0 else self.layers[-1].output_size
-        input_depth = 1 if len(self.layers) == 0 \
-            else self.layers[-1].num_kernels
+        if len(self.layers) == 0:
+            if len(self.input_size) == 2:
+                input_height, input_width = self.input_size  # Height x Width
+                input_depth = 1  # In theory this can be > 1 e.g. for rgb inputs
+            else:
+                raise ValueError(f"Invalid number of inputs when first layer is FC: "
+                                 f"{self.input_size}")
+        else:
+            input_height, input_width = self.layers[-1].output_size
+            input_depth = self.layers[-1].num_kernels
         if weights is None:
             weights = [np.random.randn(kernel_size, kernel_size) for _ in range(num_kernels)]
-        layer = ConvolutionalLayer(num_kernels, kernel_size, activation, [input_width, input_depth],
-                                   self.learning_rate, weights)
+        layer = ConvolutionalLayer(num_kernels=num_kernels, kernel_size=kernel_size,
+                                   activation=activation,
+                                   input_dimensions=(input_height, input_width, input_depth),
+                                   lr=self.learning_rate, weights=weights)
         self.layers.append(layer)
 
     def calculate(self, inputs: np.ndarray) -> np.ndarray:

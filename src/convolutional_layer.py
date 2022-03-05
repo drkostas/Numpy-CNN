@@ -4,12 +4,11 @@ from typing import *
 
 
 class ConvolutionalLayer:
-    def __init__(self, num_kernels: int, kernel_size: int, activation: str, input_dimensions: List,
-                 lr: float,
-                 weights: np.ndarray):
+    def __init__(self, num_kernels: int, kernel_size: int, activation: str,
+                 input_dimensions: Sequence[int], lr: float, weights: np.ndarray):
         """
         Initializes a fully connected layer.
-        :param neurons_per_layer: Number of neurons in the layer
+        :param num_kernels: Number of neurons in the layer
         :param activation: Activation function
         :param input_dimensions: Dimensions of input [width/height, channels]
         :param lr: Learning rate
@@ -25,12 +24,12 @@ class ConvolutionalLayer:
         self.output_size = input_dimensions[0] - kernel_size + 1
         # Initialize neurons
         self.kernels = []
-        for kernel in range(num_kernels):
+        for kernel_ind in range(num_kernels):
             neurons = []
             for neuron_ind_x in range(input_dimensions[0] - kernel_size + 1):
                 neuron_row = []
                 for neuron_ind_y in range(input_dimensions[0] - kernel_size + 1):
-                    neuron_row.append(self.activation, self.num_inputs, lr, weights[kernel])
+                    neuron_row.append(Neuron(self.activation, self.input_dimensions, lr, weights[kernel_ind]))
                     self.neurons_per_layer = self.neurons_per_layer + 1
                 neurons.append(neuron_row)
             self.kernels.append(neurons)
