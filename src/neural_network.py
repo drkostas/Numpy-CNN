@@ -27,6 +27,9 @@ class NeuralNetwork:
         :param kwargs: The arguments for the layer.
         :return: None
         """
+        # TODO: What does this mean?
+        #  Note that the input size should not be set as a parameter,
+        #  but simply set to the current final layer
         if layer_type == "convolutional":
             self.addConvLayer(**kwargs)
         elif layer_type == "fully_connected":
@@ -56,13 +59,12 @@ class NeuralNetwork:
         self.layers.append(layer)
 
     def addConvLayer(self, num_kernels: int, kernel_size: int, activation: str,
-                     stride: int, padding: str, weights: np.ndarray = None):
+                     weights: np.ndarray = None):
         """ Adds a layer to the network.
+        Stride is always 1 and padding is always valid.
         :param num_kernels: The number of neurons in the new layer.
         :param kernel_size: The size of the kernels
         :param activation: The activation function for the new layer.
-        :param stride: The stride for the convolution.
-        :param padding: The padding for the convolution.
         :param weights: The weights for the new layer.
         :return: None
         """

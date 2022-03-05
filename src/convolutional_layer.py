@@ -13,6 +13,7 @@ class ConvolutionalLayer:
         :param input_dimensions: Dimensions of input [width/height, channels]
         :param lr: Learning rate
         :param weights: Weights of the layer
+        TODO: If we have time add stride and padding
         """
         self.num_kernels = num_kernels
         self.kernel_size = kernel_size
@@ -28,8 +29,12 @@ class ConvolutionalLayer:
             neurons = []
             for neuron_ind_x in range(input_dimensions[0] - kernel_size + 1):
                 neuron_row = []
-                for neuron_ind_y in range(input_dimensions[0] - kernel_size + 1):
-                    neuron_row.append(Neuron(self.activation, self.input_dimensions, lr, weights[kernel_ind]))
+                for neuron_ind_y in range(input_dimensions[1] - kernel_size + 1):
+                    neuron = Neuron(num_inputs=kernel_size**2,
+                                    activation=self.activation,
+                                    lr=self.lr,
+                                    weights=weights[kernel_ind][neuron_ind_x][neuron_ind_y])
+                    neuron_row.append(neuron)
                     self.neurons_per_layer = self.neurons_per_layer + 1
                 neurons.append(neuron_row)
             self.kernels.append(neurons)
