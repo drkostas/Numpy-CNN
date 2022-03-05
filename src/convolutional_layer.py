@@ -54,7 +54,6 @@ class ConvolutionalLayer:
         for kernel_ind, kernel in enumerate(self.kernels):
             for kernel_x, kernel_row in enumerate(kernel):
                 for kernel_y, neuron in enumerate(kernel_row):
-                    print(type(neuron))
                     outputs.append(neuron.calculate(inputs))  # Calculate output of each neuron
         return outputs
 
