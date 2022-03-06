@@ -111,8 +111,11 @@ class NeuralNetwork:
         if not isinstance(inputs, np.ndarray):
             inputs = np.array(inputs)
         # Calculate
-        for layer in self.layers:
+        for layer_ind, layer in enumerate(self.layers):
+            print(f"# --- Layer {layer_ind+1} --- #")
+            print(f"Input shape: {inputs.shape}")
             inputs = layer.calculate(inputs)
+            print(f"Output shape: {inputs.shape}")
         outputs = np.array(inputs)
         return outputs
 

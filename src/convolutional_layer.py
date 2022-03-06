@@ -24,7 +24,8 @@ class ConvolutionalLayer:
         self.lr = lr
         self.weights = weights
         self.neurons_per_layer = 0
-        self.output_size = input_dimensions[0] - kernel_size + 1
+        self.output_size = (input_dimensions[0] - kernel_size + 1,
+                            input_dimensions[0] - kernel_size + 1)
         # Initialize neurons
         self.kernels = []  # Type: List[List[List[Neuron]]]
         for kernel_ind in range(num_kernels):
@@ -45,7 +46,7 @@ class ConvolutionalLayer:
 
         self.lr = lr
 
-    def calculate(self, inputs: np.ndarray) -> List:
+    def calculate(self, inputs: np.ndarray) -> np.ndarray:
         """
         Calculates the output of the layer.
         :param inputs: Inputs to the layer
@@ -69,7 +70,7 @@ class ConvolutionalLayer:
                     kernel_x_output.append(neuron.calculate(inputs_to_neuron))
                 kernel_output.append(kernel_x_output)
             outputs.append(kernel_output)
-        return outputs
+        return np.array(outputs)
 
     def calculate_wdeltas(self, wdeltas_next: List) -> List:
         """

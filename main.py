@@ -79,7 +79,7 @@ def get_dataset_config(dataset_name: str) -> Dict[str, Any]:
     dataset_conf = {}
     if dataset_name == 'example1':
         dataset_conf['inputs'] = []
-        dataset_conf['outputs'] = []   # TODO: change me
+        dataset_conf['outputs'] = []  # TODO: change me
     if dataset_name == 'and':
         dataset_conf['inputs'] = [[0, 0], [0, 1], [1, 0], [1, 1]]
         dataset_conf['outputs'] = [[0], [0], [0], [1]]
@@ -105,7 +105,7 @@ def main():
     """
 
     # Initializing
-    args = get_args()
+    # args = get_args()
     # Load the configurations
     # nn_type = args.network
     # nn_conf = get_network_config(nn_type)
@@ -114,17 +114,20 @@ def main():
 
     # ------- Start of Code ------- #
     # l1k1, l1k2, l1b1, l1b2, l2c1, l2c2, l2b, l3, l3b, input, output = generateExample2()
-    netWork = NeuralNetwork(input_size=(3, 3), loss_function="cross_entropy",
+    netWork = NeuralNetwork(input_size=(4, 4), loss_function="cross_entropy",
                             learning_rate=.1, input_channels=2)
+    netWork.addConvLayer(num_kernels=4, kernel_size=2, activation="logistic")
     netWork.addConvLayer(num_kernels=3, kernel_size=2, activation="logistic")
-    ch1 = np.array([[1, 2, 3],
-                    [4, 5, 6],
-                    [7, 8, 9]])
-    ch2 = np.array([[10, 20, 30],
-                    [40, 50, 60],
-                    [70, 80, 90]])
+    ch1 = np.array([[1, 2, 3, 4],
+                    [5, 6, 7, 8],
+                    [8, 9, 10, 11],
+                    [12, 13, 14, 15]])
+    ch2 = np.array([[10, 20, 30, 40],
+                    [50, 60, 70, 80],
+                    [80, 90, 100, 110],
+                    [120, 130, 140, 150]])
     inputs = np.array([ch1, ch2])
-    netWork.calculate(inputs=inputs)
+    outputs = netWork.calculate(inputs=inputs)
     # netWork.calculate(inputs=ch1)
     """
     print(f'Training the `{nn_type}` network on the `{dataset_type}` dataset.')
