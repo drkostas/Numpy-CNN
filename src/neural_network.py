@@ -32,7 +32,7 @@ class NeuralNetwork:
         """
         # Error checking
         if len(self.layers) == 0:
-            if len(self.input_size) == 1:
+            if len(self.input_size) == 1:  # TODO: check this
                 num_inputs = self.input_size[0]
             else:
                 raise ValueError(f"Invalid input size when first layer is FC: "
@@ -60,7 +60,7 @@ class NeuralNetwork:
         :return: None
         """
         if len(self.layers) == 0:
-            if len(self.input_size) == 2:
+            if len(self.input_size) == 2:  # TODO: check this
                 input_height, input_width = self.input_size  # Height x Width
                 input_channels = self.input_channels
             else:
@@ -83,7 +83,7 @@ class NeuralNetwork:
         :return: None
         """
         if len(self.layers) == 0:
-            if len(self.input_size) == 2:
+            if len(self.input_size) == 2:  # TODO: check this
                 input_height, input_width = self.input_size  # Height x Width
                 input_channels = self.input_channels
             else:

@@ -119,6 +119,7 @@ def main():
     netWork.addConvLayer(num_kernels=4, kernel_size=2, activation="logistic")
     netWork.addConvLayer(num_kernels=3, kernel_size=2, activation="logistic")
     netWork.addFlattenLayer()
+    netWork.addFullyConnectedLayer(num_neurons=2, activation="logistic")
     ch1 = np.array([[1, 2, 3, 4],
                     [5, 6, 7, 8],
                     [8, 9, 10, 11],

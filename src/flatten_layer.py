@@ -10,6 +10,7 @@ class FlattenLayer:
         :param num_inputs: Number of inputs to each neuron
         """
         self.num_inputs = num_inputs
+        self.neurons_per_layer = num_inputs
 
     @staticmethod
     def calculate(inputs: np.ndarray) -> np.ndarray:
@@ -18,7 +19,6 @@ class FlattenLayer:
         :param inputs: Inputs to the layer
         :return: Output of the layer
         """
-        print(inputs.shape)
         return np.array(inputs).flatten()
 
     @staticmethod
@@ -28,4 +28,7 @@ class FlattenLayer:
         :param wdeltas_next: Weight deltas of the next layer
         :return: Weight deltas of the layer
         """
+        # TODO:
+        # Should have a calculatewdeltas which given the 􏰁 w × δ from the next layer,
+        # simply resizes it to the size of the input.
         return wdeltas_next
