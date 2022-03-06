@@ -114,9 +114,18 @@ def main():
 
     # ------- Start of Code ------- #
     # l1k1, l1k2, l1b1, l1b2, l2c1, l2c2, l2b, l3, l3b, input, output = generateExample2()
-    netWork = NeuralNetwork(input_size=(3, 3), loss_function="cross_entropy", learning_rate=.1)
-    netWork.addConvLayer(num_kernels=2, kernel_size=2, activation="logistic")
-    netWork.calculate(inputs=np.array([[1, 2], [3, 4], [5, 6]]))
+    netWork = NeuralNetwork(input_size=(3, 3), loss_function="cross_entropy",
+                            learning_rate=.1, input_channels=2)
+    netWork.addConvLayer(num_kernels=3, kernel_size=2, activation="logistic")
+    ch1 = np.array([[1, 2, 3],
+                    [4, 5, 6],
+                    [7, 8, 9]])
+    ch2 = np.array([[10, 20, 30],
+                    [40, 50, 60],
+                    [70, 80, 90]])
+    inputs = np.array([ch1, ch2])
+    netWork.calculate(inputs=inputs)
+    # netWork.calculate(inputs=ch1)
     """
     print(f'Training the `{nn_type}` network on the `{dataset_type}` dataset.')
     # Train the network

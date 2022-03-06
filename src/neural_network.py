@@ -5,7 +5,8 @@ from typing import *
 
 
 class NeuralNetwork:
-    def __init__(self, input_size: Union[int, Tuple], loss_function: str, learning_rate: float):
+    def __init__(self, input_size: Union[int, Tuple], loss_function: str, learning_rate: float,
+                 input_channels: int = 1):
         """
         Initializes a neural network with the given parameters.
         :param input_size: The width/height of the input.
@@ -15,6 +16,7 @@ class NeuralNetwork:
         if isinstance(input_size, int):
             input_size = (input_size,)
         self.input_size = input_size
+        self.input_channels = input_channels
         self.loss_function = loss_function
         self.learning_rate = learning_rate
         # Initialize the layers
@@ -44,14 +46,19 @@ class NeuralNetwork:
         :param weights: The weights for the new layer.
         :return: None
         """
+        # Error checking
         if len(self.layers) == 0:
             if len(self.input_size) == 1:
                 num_inputs = self.input_size[0]
             else:
                 raise ValueError(f"Invalid input size when first layer is FC: "
                                  f"{self.input_size}")
+            if self.input_channels > 1:
+                raise ValueError(f"Invalid input channels when first layer is FC: "
+                                 f"{self.input_channels}")
         else:
             num_inputs = self.layers[-1].neurons_per_layer
+        # Create the layer
         if weights is None:
             weights = np.random.randn(num_neurons, num_inputs + 1)
         layer = FullyConnectedLayer(num_neurons, activation, num_inputs,
@@ -71,7 +78,7 @@ class NeuralNetwork:
         if len(self.layers) == 0:
             if len(self.input_size) == 2:
                 input_height, input_width = self.input_size  # Height x Width
-                input_channels = 1  # In theory this can be > 1 e.g. for rgb inputs
+                input_channels = self.input_channels
             else:
                 raise ValueError(f"Invalid number of inputs when first layer is FC: "
                                  f"{self.input_size}")
@@ -79,7 +86,7 @@ class NeuralNetwork:
             input_height, input_width = self.layers[-1].output_size
             input_channels = self.layers[-1].num_kernels
         if weights is None:
-            weights = [np.random.randn(kernel_size, kernel_size) for _ in range(num_kernels)]
+            weights = np.random.randn(num_kernels, kernel_size**2+1)
         layer = ConvolutionalLayer(num_kernels=num_kernels, kernel_size=kernel_size,
                                    input_channels=input_channels,
                                    input_dimensions=(input_height, input_width),
@@ -87,12 +94,23 @@ class NeuralNetwork:
                                    lr=self.learning_rate, weights=weights)
         self.layers.append(layer)
 
-    def calculate(self, inputs: np.ndarray) -> np.ndarray:
+    def calculate(self, inputs: Union[np.ndarray, Sequence]) -> np.ndarray:
         """
         Calculates the output of the network for the given inputs.
         :param inputs: The inputs to the network.
         :return: The output of the network.
         """
+        # Error checking
+        if self.input_channels > 1:
+            if inputs.shape != (self.input_channels, *self.input_size):
+                raise ValueError(f"Inputs must be of shape {self.input_channels} x {self.input_size} "
+                                 f"but was {inputs.shape}")
+        else:
+            if inputs.shape != (*self.input_size,):
+                raise ValueError(f"Inputs must be of shape {self.input_size} but was {inputs.shape}")
+        if not isinstance(inputs, np.ndarray):
+            inputs = np.array(inputs)
+        # Calculate
         for layer in self.layers:
             inputs = layer.calculate(inputs)
         outputs = np.array(inputs)

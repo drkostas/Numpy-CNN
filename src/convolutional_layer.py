@@ -15,7 +15,6 @@ class ConvolutionalLayer:
         :param input_dimensions: Dimensions of input (height, width)
         :param lr: Learning rate
         :param weights: Weights of the layer
-        TODO: If we have time add stride and padding
         """
         self.num_kernels = num_kernels
         self.kernel_size = kernel_size
@@ -33,10 +32,12 @@ class ConvolutionalLayer:
             for neuron_ind_x in range(input_dimensions[0] - kernel_size + 1):
                 neuron_row = []
                 for neuron_ind_y in range(input_dimensions[1] - kernel_size + 1):
-                    neuron = Neuron(num_inputs=kernel_size**2,  # TODO:  * input_channels or not?
+                    neuron_weights = weights[kernel_ind, :]
+                    neuron = Neuron(num_inputs=kernel_size ** 2 * input_channels,
                                     activation=self.activation,
                                     lr=self.lr,
-                                    weights=weights[kernel_ind][neuron_ind_x][neuron_ind_y])
+                                    weights=neuron_weights,
+                                    input_channels=input_channels)
                     neuron_row.append(neuron)
                     self.neurons_per_layer = self.neurons_per_layer + 1
                 neurons.append(neuron_row)
@@ -56,7 +57,16 @@ class ConvolutionalLayer:
             for kernel_x, kernel_row in enumerate(kernel):
                 kernel_x_output = []
                 for kernel_y, neuron in enumerate(kernel_row):
-                    kernel_x_output.append(neuron.calculate(inputs))  # Calculate output of each neuron
+                    if self.input_channels == 1:  # Shape is (kernel_size x kernel_size, )
+                        inputs_to_neuron = inputs[kernel_x:kernel_x + self.kernel_size,
+                                                  kernel_y:kernel_y + self.kernel_size].reshape(-1)
+                    else:  # Shape is (num_channels, kernel_size x kernel_size)
+                        inputs_to_neuron = inputs[:,
+                                                  kernel_x:kernel_x + self.kernel_size,
+                                                  kernel_y:kernel_y + self.kernel_size]\
+                            .reshape((self.input_channels, -1))
+                    # Calculate output of each neuron
+                    kernel_x_output.append(neuron.calculate(inputs_to_neuron))
                 kernel_output.append(kernel_x_output)
             outputs.append(kernel_output)
         return outputs

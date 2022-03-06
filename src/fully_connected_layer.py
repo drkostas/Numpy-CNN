@@ -27,7 +27,7 @@ class FullyConnectedLayer:
             self.neurons.append(Neuron(self.activation, self.num_inputs, lr, weights[neuron_ind]))
         self.lr = lr
 
-    def calculate(self, inputs: np.ndarray) -> List:
+    def calculate(self, inputs: np.ndarray) -> np.ndarray:
         """
         Calculates the output of the layer.
         :param inputs: Inputs to the layer
@@ -36,7 +36,7 @@ class FullyConnectedLayer:
         outputs = []
         for neuron in self.neurons:
             outputs.append(neuron.calculate(inputs))  # Calculate output of each neuron
-        return outputs
+        return np.array(outputs)
 
     def calculate_wdeltas(self, wdeltas_next: List) -> List:
         """
