@@ -3,5 +3,6 @@
 from .neuron import *
 from .fully_connected_layer import *
 from .convolutional_layer import *
+from .flatten_layer import *
 from .neural_network import *
 from .data_generator import *

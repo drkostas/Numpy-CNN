@@ -1,5 +1,6 @@
 from src import FullyConnectedLayer
 from src import ConvolutionalLayer
+from src import FlattenLayer
 import numpy as np
 from typing import *
 
@@ -21,23 +22,6 @@ class NeuralNetwork:
         self.learning_rate = learning_rate
         # Initialize the layers
         self.layers = []
-
-    def addLayer(self, layer_type: str, **kwargs):
-        """
-        Adds a layer to the network.
-        :param layer_type: The type of layer to add.
-        :param kwargs: The arguments for the layer.
-        :return: None
-        """
-        # TODO: What does this mean?
-        #  Note that the input size should not be set as a parameter,
-        #  but simply set to the current final layer
-        if layer_type == "convolutional":
-            self.addConvLayer(**kwargs)
-        elif layer_type == "fully_connected":
-            self.addFullyConnectedLayer(**kwargs)
-        else:
-            raise ValueError("Invalid layer type.")
 
     def addFullyConnectedLayer(self, num_neurons: int, activation: str, weights: np.ndarray = None):
         """ Adds a layer to the network.
@@ -86,12 +70,29 @@ class NeuralNetwork:
             input_height, input_width = self.layers[-1].output_size
             input_channels = self.layers[-1].num_kernels
         if weights is None:
-            weights = np.random.randn(num_kernels, kernel_size**2+1)
+            weights = np.random.randn(num_kernels, kernel_size ** 2 + 1)
         layer = ConvolutionalLayer(num_kernels=num_kernels, kernel_size=kernel_size,
                                    input_channels=input_channels,
                                    input_dimensions=(input_height, input_width),
                                    activation=activation,
                                    lr=self.learning_rate, weights=weights)
+        self.layers.append(layer)
+
+    def addFlattenLayer(self):
+        """ Adds a flatten layer to the network.
+        :return: None
+        """
+        if len(self.layers) == 0:
+            if len(self.input_size) == 2:
+                input_height, input_width = self.input_size  # Height x Width
+                input_channels = self.input_channels
+            else:
+                raise ValueError(f"Invalid number of inputs when first layer is FC: "
+                                 f"{self.input_size}")
+        else:
+            input_height, input_width = self.layers[-1].output_size
+            input_channels = self.layers[-1].num_kernels
+        layer = FlattenLayer(num_inputs=input_height * input_width * input_channels)
         self.layers.append(layer)
 
     def calculate(self, inputs: Union[np.ndarray, Sequence]) -> np.ndarray:
@@ -112,7 +113,7 @@ class NeuralNetwork:
             inputs = np.array(inputs)
         # Calculate
         for layer_ind, layer in enumerate(self.layers):
-            print(f"# --- Layer {layer_ind+1} --- #")
+            print(f"# --- Layer {layer_ind + 1} --- #")
             print(f"Input shape: {inputs.shape}")
             inputs = layer.calculate(inputs)
             print(f"Output shape: {inputs.shape}")
