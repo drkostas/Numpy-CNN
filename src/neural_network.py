@@ -49,6 +49,8 @@ class NeuralNetwork:
                                     self.learning_rate, weights)
         self.layers.append(layer)
 
+    addFullyConnectedLayer = addFCLayer
+
     def addConvLayer(self, num_kernels: int, kernel_size: int, activation: str,
                      weights: np.ndarray = None):
         """ Adds a layer to the network.

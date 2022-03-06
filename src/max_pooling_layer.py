@@ -25,6 +25,7 @@ class MaxPoolingLayer:
         :param inputs: Inputs to the layer
         :return: Output of the layer
         """
+        # TODO: keep the position of the max value for use in the unpooling step
         if self.input_channels == 1:  # Shape is (kernel_size x kernel_size)
             inputs = inputs.copy()[np.newaxis, ...]  # Add channel dimension
         outputs = []
@@ -45,21 +46,11 @@ class MaxPoolingLayer:
             outputs.append(kernel_output)
         return np.array(outputs)
 
-    def calculate_wdeltas(self, wdeltas_next: List) -> List:
+    @staticmethod
+    def calculate_wdeltas(wdeltas_next: List) -> List:
         """
         Calculates the weight deltas of the layer.
         :param wdeltas_next: Weight deltas of the next layer
         :return: Weight deltas of the layer
         """
-        wdeltas = []
-        for ind, neuron in enumerate(self.neurons):
-            # Calculate weight deltas of each neuron
-            fwdelta = []
-            for fwdeltas in wdeltas_next:
-                fwdelta.append(fwdeltas[ind])
-            fwdelta = np.sum(fwdelta)
-            wdelta = neuron.calc_partial_derivative(fwdelta)
-            # Update weights
-            neuron.update_weights()
-            wdeltas.append(wdelta)
-        return wdeltas
+        return wdeltas_next

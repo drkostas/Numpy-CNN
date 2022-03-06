@@ -21,6 +21,7 @@ class FlattenLayer:
         :param inputs: Inputs to the layer
         :return: Output of the layer
         """
+        # TODO: keep info about the original shape of the input for the backpropagation
         return np.array(inputs).flatten()
 
     @staticmethod
