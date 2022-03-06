@@ -114,20 +114,15 @@ def main():
 
     # ------- Start of Code ------- #
     # l1k1, l1k2, l1b1, l1b2, l2c1, l2c2, l2b, l3, l3b, input, output = generateExample2()
-    netWork = NeuralNetwork(input_size=(4, 4), loss_function="cross_entropy",
+    netWork = NeuralNetwork(input_size=(5, 5), loss_function="cross_entropy",
                             learning_rate=.1, input_channels=2)
     netWork.addConvLayer(num_kernels=4, kernel_size=2, activation="logistic")
-    netWork.addConvLayer(num_kernels=3, kernel_size=2, activation="logistic")
+    netWork.addMaxPoolLayer(kernel_size=2)
+    netWork.addConvLayer(num_kernels=8, kernel_size=2, activation="logistic")
     netWork.addFlattenLayer()
-    netWork.addFullyConnectedLayer(num_neurons=2, activation="logistic")
-    ch1 = np.array([[1, 2, 3, 4],
-                    [5, 6, 7, 8],
-                    [8, 9, 10, 11],
-                    [12, 13, 14, 15]])
-    ch2 = np.array([[10, 20, 30, 40],
-                    [50, 60, 70, 80],
-                    [80, 90, 100, 110],
-                    [120, 130, 140, 150]])
+    netWork.addFCLayer(num_neurons=2, activation="logistic")
+    ch1 = np.arange(1, 26).reshape(5, 5)
+    ch2 = np.arange(10, 260, 10).reshape(5, 5)
     inputs = np.array([ch1, ch2])
     outputs = netWork.calculate(inputs=inputs)
     # netWork.calculate(inputs=ch1)

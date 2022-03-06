@@ -16,7 +16,9 @@ class ConvolutionalLayer:
         :param lr: Learning rate
         :param weights: Weights of the layer
         """
+        self.name = "ConvolutionalLayer"
         self.num_kernels = num_kernels
+        self.output_channels = num_kernels
         self.kernel_size = kernel_size
         self.input_dimensions = input_dimensions  # Dimensions of input (height, width)
         self.input_channels = input_channels  # Number of input channels
@@ -58,7 +60,7 @@ class ConvolutionalLayer:
             for kernel_x, kernel_row in enumerate(kernel):
                 kernel_x_output = []
                 for kernel_y, neuron in enumerate(kernel_row):
-                    if self.input_channels == 1:  # Shape is (kernel_size x kernel_size, )
+                    if self.input_channels == 1:  # Shape is (kernel_size x kernel_size)
                         inputs_to_neuron = inputs[kernel_x:kernel_x + self.kernel_size,
                                                   kernel_y:kernel_y + self.kernel_size].reshape(-1)
                     else:  # Shape is (num_channels, kernel_size x kernel_size)

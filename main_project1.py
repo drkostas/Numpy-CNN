@@ -122,7 +122,7 @@ def main():
                                 learning_rate=nn_conf['learning_rate'])
         # Add the layers
         for num_neurons, activation in zip(nn_conf['neurons_per_layer'], nn_conf['activations']):
-            netWork.addFullyConnectedLayer(num_neurons=num_neurons, activation=activation)
+            netWork.addFCLayer(num_neurons=num_neurons, activation=activation)
         # Train the network for the given number of epochs
         for epoch in range(nn_conf['epochs']):
             netWork.train(inputs, outputs)  # Train the network
@@ -146,8 +146,8 @@ def main():
         # Add the layers
         for num_neurons, activation, weights_ in \
                 zip(nn_conf['neurons_per_layer'], nn_conf['activations'], weights):
-            netWork.addFullyConnectedLayer(num_neurons=num_neurons, activation=activation,
-                                           weights=weights_)
+            netWork.addFCLayer(num_neurons=num_neurons, activation=activation,
+                               weights=weights_)
         # Print the network inputs and weights before training
         print("Pre-training Inputs:")
         print(f"{inputs[0]}")

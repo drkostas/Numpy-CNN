@@ -9,8 +9,10 @@ class FlattenLayer:
         Initializes a flatten layer.
         :param num_inputs: Number of inputs to each neuron
         """
+        self.name = "FlattenLayer"
         self.num_inputs = num_inputs
         self.neurons_per_layer = num_inputs
+        self.output_channels = 1
 
     @staticmethod
     def calculate(inputs: np.ndarray) -> np.ndarray:

@@ -1,6 +1,6 @@
-from src import FullyConnectedLayer
-from src import ConvolutionalLayer
-from src import FlattenLayer
+from src import FullyConnectedLayer, ConvolutionalLayer, \
+    MaxPoolingLayer, FlattenLayer
+
 import numpy as np
 from typing import *
 
@@ -23,7 +23,7 @@ class NeuralNetwork:
         # Initialize the layers
         self.layers = []
 
-    def addFullyConnectedLayer(self, num_neurons: int, activation: str, weights: np.ndarray = None):
+    def addFCLayer(self, num_neurons: int, activation: str, weights: np.ndarray = None):
         """ Adds a layer to the network.
         :param num_neurons: The number of neurons in the new layer.
         :param activation: The activation function for the new layer.
@@ -32,7 +32,7 @@ class NeuralNetwork:
         """
         # Error checking
         if len(self.layers) == 0:
-            if len(self.input_size) == 1:  # TODO: check this
+            if len(self.input_size) == 1:  # 1 dimension
                 num_inputs = self.input_size[0]
             else:
                 raise ValueError(f"Invalid input size when first layer is FC: "
@@ -60,15 +60,19 @@ class NeuralNetwork:
         :return: None
         """
         if len(self.layers) == 0:
-            if len(self.input_size) == 2:  # TODO: check this
+            if len(self.input_size) == 2:  # 2 dimensions
                 input_height, input_width = self.input_size  # Height x Width
                 input_channels = self.input_channels
             else:
-                raise ValueError(f"Invalid number of inputs when first layer is FC: "
+                raise ValueError(f"Invalid number of inputs when first layer is Convolutional: "
                                  f"{self.input_size}")
         else:
+            if isinstance(self.layers[-1], FullyConnectedLayer) \
+                    or isinstance(self.layers[-1], FlattenLayer):
+                raise ValueError(f"Invalid previous layer type when adding conv layer: "
+                                 f"{self.layers[-1]}")
             input_height, input_width = self.layers[-1].output_size
-            input_channels = self.layers[-1].num_kernels
+            input_channels = self.layers[-1].output_channels
         if weights is None:
             weights = np.random.randn(num_kernels, kernel_size ** 2 + 1)
         layer = ConvolutionalLayer(num_kernels=num_kernels, kernel_size=kernel_size,
@@ -78,6 +82,29 @@ class NeuralNetwork:
                                    lr=self.learning_rate, weights=weights)
         self.layers.append(layer)
 
+    def addMaxPoolLayer(self, kernel_size: int):
+        """ Adds a Max Pooling layer to the network.
+        :return: None
+        """
+        if len(self.layers) == 0:
+            if len(self.input_size) == 2:  # 2 dimensions
+                input_height, input_width = self.input_size  # Height x Width
+                input_channels = self.input_channels
+            else:
+                raise ValueError(f"Invalid number of inputs when first layer is Convolutional: "
+                                 f"{self.input_size}")
+        else:
+            if isinstance(self.layers[-1], FullyConnectedLayer) \
+                    or isinstance(self.layers[-1], FlattenLayer):
+                raise ValueError(f"Invalid previous layer type when adding conv layer: "
+                                 f"{self.layers[-1]}")
+            input_height, input_width = self.layers[-1].output_size
+            input_channels = self.layers[-1].output_channels
+        layer = MaxPoolingLayer(kernel_size=kernel_size,
+                                input_channels=input_channels,
+                                input_dimensions=(input_height, input_width))
+        self.layers.append(layer)
+
     def addFlattenLayer(self):
         """ Adds a flatten layer to the network.
         :return: None
@@ -85,10 +112,12 @@ class NeuralNetwork:
         if len(self.layers) == 0:
             if len(self.input_size) == 2:  # TODO: check this
                 input_height, input_width = self.input_size  # Height x Width
-                input_channels = self.input_channels
+            elif len(self.input_size) == 1:
+                input_height, input_width = self.input_size, 1
             else:
-                raise ValueError(f"Invalid number of inputs when first layer is FC: "
+                raise ValueError(f"Invalid number of inputs when first layer is Flatten Layer: "
                                  f"{self.input_size}")
+            input_channels = self.input_channels
         else:
             input_height, input_width = self.layers[-1].output_size
             input_channels = self.layers[-1].num_kernels
@@ -111,9 +140,10 @@ class NeuralNetwork:
                 raise ValueError(f"Inputs must be of shape {self.input_size} but was {inputs.shape}")
         if not isinstance(inputs, np.ndarray):
             inputs = np.array(inputs)
+
         # Calculate
         for layer_ind, layer in enumerate(self.layers):
-            print(f"# --- Layer {layer_ind + 1} --- #")
+            print(f"# --- Layer {layer_ind + 1}: {layer.name} --- #")
             print(f"Input shape: {inputs.shape}")
             inputs = layer.calculate(inputs)
             print(f"Output shape: {inputs.shape}")

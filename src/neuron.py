@@ -64,7 +64,7 @@ class Neuron:
                 raise ValueError(f"Inputs must be of shape {self.num_inputs} but was {inputs.shape}")
 
         # Calculate the net value
-        self.inputs = np.append(inputs.copy(), [1])
+        self.inputs = np.append(inputs.copy().flatten(), [1])
         self.net = np.sum(self.inputs * self.weights)
         return self.activate()
 

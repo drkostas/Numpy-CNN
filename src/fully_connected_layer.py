@@ -18,6 +18,7 @@ class FullyConnectedLayer:
             self.neurons_per_layer = neurons_per_layer
         else:
             raise ValueError(f"Invalid type of neurons per layer for FC layer: {neurons_per_layer}")
+        self.name = "FullyConnectedLayer"
         self.activation = activation
         self.num_inputs = num_inputs
 
