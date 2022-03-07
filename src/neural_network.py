@@ -145,10 +145,10 @@ class NeuralNetwork:
 
         # Calculate
         for layer_ind, layer in enumerate(self.layers):
-            print(f"# --- Layer {layer_ind + 1}: {layer.name} --- #")
-            print(f"Input shape: {inputs.shape}")
+            # print(f"# --- Layer {layer_ind + 1}: {layer.name} --- #")
+            # print(f"Input shape: {inputs.shape}")
             inputs = layer.calculate(inputs)
-            print(f"Output shape: {inputs.shape}")
+            # print(f"Output shape: {inputs.shape}")
         outputs = np.array(inputs)
         return outputs
 
@@ -190,6 +190,7 @@ class NeuralNetwork:
         :param targets: The targets for the outputs.
         :return: The mean squared loss of the network.
         """
+        # TODO: change this to 1/N*1/2*(y-y')^2 ?
         return np.sum((outputs - targets) ** 2) / outputs.shape[0]
 
     def loss_derivative(self, outputs: np.ndarray, targets: np.ndarray) -> np.ndarray:
@@ -228,6 +229,7 @@ class NeuralNetwork:
         :param targets: The targets for the outputs.
         :return: The derivative of the mean squared loss of the network.
         """
+        # TODO: change this to 1/N*(y-y') ? (equivalent change to square_error_loss change)
         return 2 * (np.array(outputs) - np.array(targets)) / np.array(outputs).shape[0]
 
     def train(self, inputs: np.ndarray, targets: np.ndarray) -> None:
@@ -242,9 +244,10 @@ class NeuralNetwork:
             # Calculate the outputs of the network for the given input.
             outputs = self.calculate(inputs[i])
             # Calculate the derivative of the loss of the network for the given outputs and targets.
-            act_der = [neuron.activation_derivative()
-                       for neuron in self.layers[len(self.layers) - 1].neurons]
-            wdeltas = [self.loss_derivative(outputs, targets[i]) * act_der]
+            loss_der = self.loss_derivative(outputs, targets[i])
+            act_der = np.array([neuron.activation_derivative()
+                                for neuron in self.layers[-1].neurons]).reshape(loss_der.shape)
+            wdeltas = [loss_der * act_der]
             # Update the weights of the network.
             for j in range(len(self.layers) - 1, -1, -1):
                 wdeltas = self.layers[j].calculate_wdeltas(wdeltas)

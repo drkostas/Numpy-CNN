@@ -45,7 +45,7 @@ class ConvolutionalLayer:
                     self.neurons_per_layer = self.neurons_per_layer + 1
                 neurons.append(neuron_row)
             self.kernels.append(neurons)
-
+        self.neurons = np.array(self.kernels).flatten().tolist()
         self.lr = lr
 
     def calculate(self, inputs: np.ndarray) -> np.ndarray:

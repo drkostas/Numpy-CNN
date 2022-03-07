@@ -45,8 +45,6 @@ class Neuron:
             raise ValueError(f"Activation function not recognized: {self.activation}")
         return self.output
 
-    # Receives a vector of inputs and determines the nodes output using
-    # the stored weights and the activation function
     def calculate(self, inputs: np.ndarray):
         """ Receives a vector of inputs and determines the nodes output using
         the stored weights and the activation function.
