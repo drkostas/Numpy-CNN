@@ -112,20 +112,44 @@ def main():
     # dataset_type = args.dataset
     # dataset_conf = get_dataset_config(dataset_type)
 
+    # netWork = NeuralNetwork(input_size=10, loss_function="cross_entropy",
+    #                         learning_rate=.1, input_channels=1)
+    # netWork.addFCLayer(num_neurons=5, activation="logistic")
+    # netWork.addFCLayer(num_neurons=2, activation="logistic")
+    # tin = np.arange(1, 201).reshape(20, 10)
+    # tout = np.array([[7, 8]])
+    # netWork.train(tin, tout)
+    # import sys
+    # sys.exit()
+
     # ------- Start of Code ------- #
     # l1k1, l1k2, l1b1, l1b2, l2c1, l2c2, l2b, l3, l3b, input, output = generateExample2()
     netWork = NeuralNetwork(input_size=(5, 5), loss_function="cross_entropy",
                             learning_rate=.1, input_channels=2)
-    netWork.addConvLayer(num_kernels=4, kernel_size=2, activation="logistic")
-    netWork.addMaxPoolLayer(kernel_size=2)
-    netWork.addConvLayer(num_kernels=8, kernel_size=2, activation="logistic")
-    netWork.addFlattenLayer()
-    netWork.addFCLayer(num_neurons=2, activation="logistic")
+    netWork.addConvLayer(num_kernels=3, kernel_size=2, activation="logistic")
+    # netWork.addMaxPoolLayer(kernel_size=2)
+    # netWork.addConvLayer(num_kernels=8, kernel_size=2, activation="logistic")
+    # netWork.addFlattenLayer()
+    # netWork.addFCLayer(num_neurons=3, activation="logistic")
+    # Two input channel data
     ch1 = np.arange(1, 26).reshape(5, 5)
     ch2 = np.arange(10, 260, 10).reshape(5, 5)
     inputs = np.array([ch1, ch2])
+    targets = np.arange(-1, -49, -1).reshape(3, 4, 4)
+    # Calculate output
     outputs = netWork.calculate(inputs=inputs)
-    # netWork.calculate(inputs=ch1)
+    # Calculate Loss derivative
+    loss_der = netWork.loss_derivative(outputs, targets)
+    # # Calculate the derivative of the activation
+    # act_der = np.array([neuron.activation_derivative()
+    #                     for neuron in netWork.layers[-1].neurons]) \
+    #             .reshape(loss_der.shape)
+    wdeltas = np.array([loss_der])
+    print(wdeltas)
+    wdeltas = netWork.layers[-1].calculate_wdeltas(wdeltas)
+    print(wdeltas)
+    # netWork.train(inputs, targets)  # Train the network
+    # loss = netWork.calculate_loss(inputs, targets)  # Calculate the loss
     """
     print(f'Training the `{nn_type}` network on the `{dataset_type}` dataset.')
     # Train the network

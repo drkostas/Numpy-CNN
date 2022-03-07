@@ -39,7 +39,7 @@ class FullyConnectedLayer:
             outputs.append(neuron.calculate(inputs))  # Calculate output of each neuron
         return np.array(outputs)
 
-    def calculate_wdeltas(self, wdeltas_next: List) -> List:
+    def calculate_wdeltas(self, wdeltas_next: np.ndarray) -> np.ndarray:
         """
         Calculates the weight deltas of the layer.
         :param wdeltas_next: Weight deltas of the next layer
@@ -56,4 +56,5 @@ class FullyConnectedLayer:
             # Update weights
             neuron.update_weights()
             wdeltas.append(wdelta)
+        wdeltas = np.array(wdeltas)
         return wdeltas

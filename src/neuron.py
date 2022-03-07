@@ -76,13 +76,14 @@ class Neuron:
 
     def derivative(self, delta):
         """ Calculates and saves the partial derivative with respect to the weights. """
-        self.partial_der = np.array(self.inputs) * delta
+        self.partial_der = np.array(self.inputs) * delta  # dE/dw
 
     def calc_partial_derivative(self, deltaw_1):
         """ Calculates and saves the partial derivative with respect to the weights. """
         delta = deltaw_1 * self.activation_derivative()
         self.derivative(delta)
-        return delta * self.weights
+        delta_w = delta * self.weights
+        return delta_w
 
     def update_weights(self):
         """ Updates the nodes weights using the saved partial derivatives and learning rate. """

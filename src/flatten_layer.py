@@ -13,25 +13,23 @@ class FlattenLayer:
         self.num_inputs = num_inputs
         self.neurons_per_layer = num_inputs
         self.output_channels = 1
+        self.input_shape = None
 
-    @staticmethod
-    def calculate(inputs: np.ndarray) -> np.ndarray:
+    def calculate(self, inputs: np.ndarray) -> np.ndarray:
         """
         Calculates the output of the layer.
         :param inputs: Inputs to the layer
         :return: Output of the layer
         """
         # TODO: keep info about the original shape of the input for the backpropagation
-        return np.array(inputs).flatten()
+        self.input_shape = inputs.shape
+        inputs_flatten = np.array(inputs).flatten()
+        return inputs_flatten
 
-    @staticmethod
-    def calculate_wdeltas(wdeltas_next: List) -> List:
+    def calculate_wdeltas(self, wdeltas_next: np.ndarray) -> np.ndarray:
         """
         Calculates the weight deltas of the layer.
         :param wdeltas_next: Weight deltas of the next layer
         :return: Weight deltas of the layer
         """
-        # TODO:
-        # Should have a calculatewdeltas which given the 􏰁 w × δ from the next layer,
-        # simply resizes it to the size of the input.
-        return wdeltas_next
+        return wdeltas_next.reshape(self.input_shape)

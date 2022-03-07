@@ -62,11 +62,11 @@ class ConvolutionalLayer:
                 for kernel_y, neuron in enumerate(kernel_row):
                     if self.input_channels == 1:  # Shape is (kernel_size x kernel_size)
                         inputs_to_neuron = inputs[kernel_x:kernel_x + self.kernel_size,
-                                                  kernel_y:kernel_y + self.kernel_size].reshape(-1)
+                                           kernel_y:kernel_y + self.kernel_size].reshape(-1)
                     else:  # Shape is (num_channels, kernel_size x kernel_size)
                         inputs_to_neuron = inputs[:,
-                                                  kernel_x:kernel_x + self.kernel_size,
-                                                  kernel_y:kernel_y + self.kernel_size]\
+                                           kernel_x:kernel_x + self.kernel_size,
+                                           kernel_y:kernel_y + self.kernel_size] \
                             .reshape((self.input_channels, -1))
                     # Calculate output of each neuron
                     kernel_x_output.append(neuron.calculate(inputs_to_neuron))
@@ -74,21 +74,31 @@ class ConvolutionalLayer:
             outputs.append(kernel_output)
         return np.array(outputs)
 
-    def calculate_wdeltas(self, wdeltas_next: List) -> List:
+    def calculate_wdeltas(self, wdeltas_next: np.ndarray) -> np.ndarray:
         """
         Calculates the weight deltas of the layer.
         :param wdeltas_next: Weight deltas of the next layer
         :return: Weight deltas of the layer
         """
-        wdeltas = []
-        for ind, neuron in enumerate(self.neurons):
-            # Calculate weight deltas of each neuron
-            fwdelta = []
-            for fwdeltas in wdeltas_next:
-                fwdelta.append(fwdeltas[ind])
-            fwdelta = np.sum(fwdelta)
-            wdelta = neuron.calc_partial_derivative(fwdelta)
-            # Update weights
-            neuron.update_weights()
-            wdeltas.append(wdelta)
+        wdeltas_next = wdeltas_next[0]
+        wdeltas = np.zeros((self.input_channels, *self.input_dimensions))
+        for delta_ind_x in range(self.input_dimensions[0]):
+            for delta_ind_y in range(self.input_dimensions[1]):
+                for kernel_ind in range(self.num_kernels):
+                    for delta_next_ind_x in range(self.input_dimensions[0] - self.kernel_size + 1):
+                        for delta_next_ind_y in range(self.input_dimensions[1] - self.kernel_size + 1):
+                            curr_wdeltas_next = wdeltas_next[kernel_ind,
+                                                             delta_next_ind_x,
+                                                             delta_next_ind_y]
+                            neuron = self.kernels[kernel_ind][delta_next_ind_x][delta_next_ind_y]
+                            neuron.derivative(curr_wdeltas_next)
+                            neuron.update_weights()
+                            neuron_weights = neuron.weights
+                            neuron_activ_deriv = neuron.activation_derivative()
+
+                            current_wdeltas = curr_wdeltas_next * neuron_activ_deriv * neuron_weights
+                            for input_channel in range(self.input_channels):
+                                wdeltas[input_channel,
+                                        delta_ind_x,
+                                        delta_ind_y] += np.sum(current_wdeltas)
         return wdeltas

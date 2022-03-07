@@ -241,13 +241,15 @@ class NeuralNetwork:
         """
 
         for i in range(len(inputs)):
+            input_batch = inputs[i, :]
             # Calculate the outputs of the network for the given input.
-            outputs = self.calculate(inputs[i])
+            outputs = self.calculate(input_batch)
             # Calculate the derivative of the loss of the network for the given outputs and targets.
             loss_der = self.loss_derivative(outputs, targets[i])
-            act_der = np.array([neuron.activation_derivative()
-                                for neuron in self.layers[-1].neurons]).reshape(loss_der.shape)
-            wdeltas = [loss_der * act_der]
+            # act_der = np.array([neuron.activation_derivative()
+            #                     for neuron in self.layers[-1].neurons]).reshape(loss_der.shape)
+            # wdeltas = [loss_der * act_der]
+            wdeltas = np.array([loss_der])
             # Update the weights of the network.
             for j in range(len(self.layers) - 1, -1, -1):
                 wdeltas = self.layers[j].calculate_wdeltas(wdeltas)
