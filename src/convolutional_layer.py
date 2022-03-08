@@ -80,7 +80,7 @@ class ConvolutionalLayer:
         :param wdeltas_next: Weight deltas of the next layer
         :return: Weight deltas of the layer
         """
-        wdeltas_next = wdeltas_next[0]
+        #wdeltas_next = wdeltas_next[0]
         wdeltas = np.zeros((self.input_channels, *self.input_dimensions))
         for delta_ind_x in range(self.input_dimensions[0]):
             for delta_ind_y in range(self.input_dimensions[1]):

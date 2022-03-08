@@ -13,11 +13,11 @@ class Neuron:
             input_channels: The number of input channels.
         """
         # Error checking
-        if num_inputs/input_channels != (weights.size-1):  # -1 for the bias
+        if num_inputs != (weights.size-1):  # -1 for the bias
             print(f"num_inputs: {num_inputs}")
             print(f"input_channels: {input_channels}")
             print(f"weights.size: {weights.size}")
-            raise ValueError(f"Number of inputs/input_channels ({num_inputs/input_channels}) "
+            raise ValueError(f"Number of inputs ({num_inputs/input_channels}) "
                              f"must be equal to (weights.size-1) ({weights.size-1})")
         # Initializes all input vars
         self.activation = activation
@@ -26,9 +26,9 @@ class Neuron:
         self.lr = lr
         self.weights = weights
         # Duplicate the weights for each input channel
-        if self.input_channels > 1:
-            self.weights = np.concatenate((np.tile(self.weights[:-1], self.input_channels),
-                                           self.weights[-1].reshape(-1)))
+        #if self.input_channels > 1:
+        #    self.weights = np.concatenate((np.tile(self.weights[:-1], self.input_channels),
+        #                                   self.weights[-1].reshape(-1)))
         # Initialize all other object vars
         self.output = None
         self.inputs = None
@@ -82,7 +82,7 @@ class Neuron:
         """ Calculates and saves the partial derivative with respect to the weights. """
         delta = deltaw_1 * self.activation_derivative()
         self.derivative(delta)
-        delta_w = delta * self.weights
+        delta_w = delta * self.weights[:-1]
         return delta_w
 
     def update_weights(self):

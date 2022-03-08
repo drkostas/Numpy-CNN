@@ -124,31 +124,36 @@ def main():
 
     # ------- Start of Code ------- #
     # l1k1, l1k2, l1b1, l1b2, l2c1, l2c2, l2b, l3, l3b, input, output = generateExample2()
-    netWork = NeuralNetwork(input_size=(5, 5), loss_function="cross_entropy",
-                            learning_rate=.1, input_channels=2)
-    netWork.addConvLayer(num_kernels=3, kernel_size=2, activation="logistic")
-    # netWork.addMaxPoolLayer(kernel_size=2)
-    # netWork.addConvLayer(num_kernels=8, kernel_size=2, activation="logistic")
-    # netWork.addFlattenLayer()
-    # netWork.addFCLayer(num_neurons=3, activation="logistic")
-    # Two input channel data
-    ch1 = np.arange(1, 26).reshape(5, 5)
-    ch2 = np.arange(10, 260, 10).reshape(5, 5)
-    inputs = np.array([ch1, ch2])
-    targets = np.arange(-1, -49, -1).reshape(3, 4, 4)
-    # Calculate output
-    outputs = netWork.calculate(inputs=inputs)
+    l1k1, l1k2, l1b1, l1b2, l2c1, l2c2, l2b, l3, l3b, input, targets = generateExample2()
+    weights_L1 = np.array([np.concatenate((l1k1.flatten(),l1b1)),np.concatenate((l1k2.flatten(),l1b2))])
+    netWork = NeuralNetwork(input_size=(7, 7), loss_function="square_error",
+                            learning_rate=100, input_channels=1)
+    netWork.addConvLayer(num_kernels=2, kernel_size=3, activation="logistic",weights=weights_L1)
+    weights_L2 = np.array([np.concatenate((l2c1.flatten(),l2c2.flatten(), l2b))])
+    netWork.addConvLayer(num_kernels=1, kernel_size=3, activation="logistic",weights=weights_L2)
+    netWork.addFlattenLayer()
+    weights_L3 = np.array([np.concatenate((l3.flatten(),l3b))])
+    netWork.addFCLayer(num_neurons=1, activation="logistic",weights=weights_L3)
+    outputs = netWork.calculate(inputs=input)
+    print(f"Initial Output: '{outputs}'\n")
+
     # Calculate Loss derivative
     loss_der = netWork.loss_derivative(outputs, targets)
+    loss = netWork.calculate_loss([input],targets)
+    print(loss_der)
     # # Calculate the derivative of the activation
+
     # act_der = np.array([neuron.activation_derivative()
     #                     for neuron in netWork.layers[-1].neurons]) \
     #             .reshape(loss_der.shape)
-    wdeltas = np.array([loss_der])
-    print(wdeltas)
-    wdeltas = netWork.layers[-1].calculate_wdeltas(wdeltas)
-    print(wdeltas)
-    # netWork.train(inputs, targets)  # Train the network
+    ##wdeltas = np.array([loss_der])
+    ##print(wdeltas)
+    ##wdeltas = netWork.layers[-1].calculate_wdeltas(wdeltas)
+    ##print(wdeltas)
+    netWork.train(np.array([input]), targets)  # Train the network
+
+    outputs = netWork.calculate(inputs=input)
+    print(f"Final Output: '{outputs}'\n")
     # loss = netWork.calculate_loss(inputs, targets)  # Calculate the loss
     """
     print(f'Training the `{nn_type}` network on the `{dataset_type}` dataset.')

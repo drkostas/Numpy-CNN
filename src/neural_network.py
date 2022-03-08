@@ -76,7 +76,7 @@ class NeuralNetwork:
             input_height, input_width = self.layers[-1].output_size
             input_channels = self.layers[-1].output_channels
         if weights is None:
-            weights = np.random.randn(num_kernels, kernel_size ** 2 + 1)
+            weights = np.random.randn(num_kernels, (kernel_size** 2)*input_channels + 1)
         layer = ConvolutionalLayer(num_kernels=num_kernels, kernel_size=kernel_size,
                                    input_channels=input_channels,
                                    input_dimensions=(input_height, input_width),
@@ -191,7 +191,7 @@ class NeuralNetwork:
         :return: The mean squared loss of the network.
         """
         # TODO: change this to 1/N*1/2*(y-y')^2 ?
-        return np.sum((outputs - targets) ** 2) / outputs.shape[0]
+        return np.sum((outputs - targets) ** 2) / (outputs.shape[0])
 
     def loss_derivative(self, outputs: np.ndarray, targets: np.ndarray) -> np.ndarray:
         """
@@ -230,7 +230,7 @@ class NeuralNetwork:
         :return: The derivative of the mean squared loss of the network.
         """
         # TODO: change this to 1/N*(y-y') ? (equivalent change to square_error_loss change)
-        return 2 * (np.array(outputs) - np.array(targets)) / np.array(outputs).shape[0]
+        return  2*(np.array(outputs) - np.array(targets)) / np.array(outputs).shape[0]
 
     def train(self, inputs: np.ndarray, targets: np.ndarray) -> None:
         """
@@ -247,8 +247,8 @@ class NeuralNetwork:
             # Calculate the derivative of the loss of the network for the given outputs and targets.
             loss_der = self.loss_derivative(outputs, targets[i])
             # act_der = np.array([neuron.activation_derivative()
-            #                     for neuron in self.layers[-1].neurons]).reshape(loss_der.shape)
-            # wdeltas = [loss_der * act_der]
+            #                      for neuron in self.layers[-1].neurons]).reshape(loss_der.shape)
+            # wdeltas = np.array([loss_der * act_der])
             wdeltas = np.array([loss_der])
             # Update the weights of the network.
             for j in range(len(self.layers) - 1, -1, -1):
