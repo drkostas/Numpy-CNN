@@ -82,23 +82,24 @@ class ConvolutionalLayer:
         """
         #wdeltas_next = wdeltas_next[0]
         wdeltas = np.zeros((self.input_channels, *self.input_dimensions))
-        for delta_ind_x in range(self.input_dimensions[0]):
-            for delta_ind_y in range(self.input_dimensions[1]):
-                for kernel_ind in range(self.num_kernels):
-                    for delta_next_ind_x in range(self.input_dimensions[0] - self.kernel_size + 1):
-                        for delta_next_ind_y in range(self.input_dimensions[1] - self.kernel_size + 1):
-                            curr_wdeltas_next = wdeltas_next[kernel_ind,
-                                                             delta_next_ind_x,
-                                                             delta_next_ind_y]
-                            neuron = self.kernels[kernel_ind][delta_next_ind_x][delta_next_ind_y]
-                            neuron.derivative(curr_wdeltas_next)
-                            neuron.update_weights()
-                            neuron_weights = neuron.weights
-                            neuron_activ_deriv = neuron.activation_derivative()
 
-                            current_wdeltas = curr_wdeltas_next * neuron_activ_deriv * neuron_weights
-                            for input_channel in range(self.input_channels):
-                                wdeltas[input_channel,
-                                        delta_ind_x,
-                                        delta_ind_y] += np.sum(current_wdeltas)
+        for k in range(self.num_kernels):
+            wdelta_next_k = wdeltas_next[k]
+            flattenedIndex = 0
+            dedw = np.zeros(len(self.kernels[k][0][0].weights))
+            for i in range(len(self.kernels[k])):
+                for j in range(len(self.kernels[k])):
+                    wdelta_next_k[i,j] = wdelta_next_k[i,j]*self.kernels[k][i][j].activation_derivative()
+                    dedw = dedw +self.kernels[k][i][j].inputs*wdelta_next_k[i,j]
+
+                    wdeltas[:,i:(i+3),j:(j+3)] = wdeltas[:,i:(i+3),j:(j+3)] + \
+                                                 wdelta_next_k[i,j]*(self.kernels[k][i][j].inputs[:-1].reshape(\
+                                                 self.input_channels,self.kernel_size,self.kernel_size))
+            index = 0
+            for i in range(len(self.kernels[k])):
+                for j in range(len(self.kernels[k])):
+                    self.kernels[k][i][j].partial_der = dedw
+                    self.kernels[k][i][j].update_weights()
+                    index = index+1
         return wdeltas
+
