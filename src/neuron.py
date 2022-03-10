@@ -17,7 +17,7 @@ class Neuron:
             print(f"num_inputs: {num_inputs}")
             print(f"input_channels: {input_channels}")
             print(f"weights.size: {weights.size}")
-            raise ValueError(f"Number of inputs ({num_inputs/input_channels}) "
+            raise ValueError(f"Number of inputs ({num_inputs}) "
                              f"must be equal to (weights.size-1) ({weights.size-1})")
         # Initializes all input vars
         self.activation = activation

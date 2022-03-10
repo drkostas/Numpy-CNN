@@ -15,7 +15,7 @@ class MaxPoolingLayer:
         self.kernel_size = kernel_size
         self.input_dimensions = input_dimensions  # Dimensions of input (height, width)
         self.input_channels = input_channels  # Number of input channels
-        self.output_channels = input_channels  # Number of output channels
+        self.num_kernels = input_channels  # Number of output channels
         self.output_size = (input_dimensions[0] - kernel_size + 1,
                             input_dimensions[0] - kernel_size + 1)
 

@@ -1,7 +1,10 @@
 import traceback
 import argparse
 import numpy as np
-from src import NeuralNetwork, generateExample2
+from src import NeuralNetwork, \
+    generateExample1, generateExample2, generateExample3,\
+    tensorExample1, tensorExample2, tensorExample3
+
 from typing import *
 
 
@@ -97,7 +100,7 @@ def get_dataset_config(dataset_name: str) -> Dict[str, Any]:
     return dataset_conf
 
 
-def main():
+def main() -> argparse.Namespace:
     """This is the main function of main.py
 
     Example:
@@ -123,38 +126,124 @@ def main():
     # sys.exit()
 
     # ------- Start of Code ------- #
-    # l1k1, l1k2, l1b1, l1b2, l2c1, l2c2, l2b, l3, l3b, input, output = generateExample2()
-    l1k1, l1k2, l1b1, l1b2, l2c1, l2c2, l2b, l3, l3b, input, targets = generateExample2()
-    weights_L1 = np.array([np.concatenate((l1k1.flatten(),l1b1)),np.concatenate((l1k2.flatten(),l1b2))])
-    netWork = NeuralNetwork(input_size=(7, 7), loss_function="square_error",
-                            learning_rate=100, input_channels=1)
-    netWork.addConvLayer(num_kernels=2, kernel_size=3, activation="logistic",weights=weights_L1)
-    weights_L2 = np.array([np.concatenate((l2c1.flatten(),l2c2.flatten(), l2b))])
-    netWork.addConvLayer(num_kernels=1, kernel_size=3, activation="logistic",weights=weights_L2)
-    netWork.addFlattenLayer()
-    weights_L3 = np.array([np.concatenate((l3.flatten(),l3b))])
-    netWork.addFCLayer(num_neurons=1, activation="logistic",weights=weights_L3)
-    outputs = netWork.calculate(inputs=input)
-    print(f"Initial Output: '{outputs}'\n")
+    example = 3
+    if (example == 1):
+        tensorExample1()
+        l1, l1b, l2, l2b, input, targets = generateExample1()
+        weights_L1 = np.array([np.concatenate((l1.flatten(), l1b))])
+        netWork = NeuralNetwork(input_size=(5, 5), loss_function="square_error",
+                                learning_rate=100, input_channels=1)
+        netWork.addConvLayer(num_kernels=1, kernel_size=3, activation="logistic", weights=weights_L1)
+        netWork.addFlattenLayer()
+        weights_L2 = np.array([np.concatenate((l2.flatten(), l2b))])
+        netWork.addFCLayer(num_neurons=1, activation="logistic", weights=weights_L2)
+        outputs = netWork.calculate(inputs=input)
 
-    # Calculate Loss derivative
-    loss_der = netWork.loss_derivative(outputs, targets)
-    loss = netWork.calculate_loss([input],targets)
-    print(loss_der)
-    # # Calculate the derivative of the activation
+        print("----------- Custom Model -----------")
+        print(f"model output before:\n{outputs}")
 
-    # act_der = np.array([neuron.activation_derivative()
-    #                     for neuron in netWork.layers[-1].neurons]) \
-    #             .reshape(loss_der.shape)
-    ##wdeltas = np.array([loss_der])
-    ##print(wdeltas)
-    ##wdeltas = netWork.layers[-1].calculate_wdeltas(wdeltas)
-    ##print(wdeltas)
-    netWork.train(np.array([input]), targets)  # Train the network
+        # Calculate Loss derivative
+        loss_der = netWork.loss_derivative(outputs, targets)
+        loss = netWork.calculate_loss([input], targets)
+        netWork.train(np.array([input]), targets)  # Train the network
 
-    outputs = netWork.calculate(inputs=input)
-    print(f"Final Output: '{outputs}'\n")
-    # loss = netWork.calculate_loss(inputs, targets)  # Calculate the loss
+        outputs = netWork.calculate(inputs=input)
+        print(f"model output after: \n{outputs}")
+
+        print('1st convolutional layer, kernel weights:')
+        print(netWork.layers[0].kernels[0][0][0].weights[:-1].reshape((3,3)))
+        print('1st convolutional layer, kernel bias:')
+        print(np.array([netWork.layers[0].kernels[0][0][0].weights[-1]]))
+        print('fully connected layer weights:')
+
+        print(netWork.layers[2].neurons[0].weights[:-1])
+        print('fully connected layer bias:')
+        print(np.array([netWork.layers[2].neurons[0].weights[-1]]))
+
+    elif(example==2):
+        tensorExample2()
+        l1k1, l1k2, l1b1, l1b2, l2c1, l2c2, l2b, l3, l3b, input, targets = generateExample2()
+        weights_L1 = np.array([np.concatenate((l1k1.flatten(),l1b1)),np.concatenate((l1k2.flatten(),l1b2))])
+        netWork = NeuralNetwork(input_size=(7, 7), loss_function="square_error",
+                                learning_rate=100, input_channels=1)
+        netWork.addConvLayer(num_kernels=2, kernel_size=3, activation="logistic",weights=weights_L1)
+        weights_L2 = np.array([np.concatenate((l2c1.flatten(),l2c2.flatten(), l2b))])
+        netWork.addConvLayer(num_kernels=1, kernel_size=3, activation="logistic",weights=weights_L2)
+        netWork.addFlattenLayer()
+        weights_L3 = np.array([np.concatenate((l3.flatten(),l3b))])
+        netWork.addFCLayer(num_neurons=1, activation="logistic",weights=weights_L3)
+        outputs = netWork.calculate(inputs=input)
+        print("----------- Custom Model -----------")
+        print(f"model output before:\n{outputs}")
+
+        # Calculate Loss derivative
+        loss_der = netWork.loss_derivative(outputs, targets)
+        loss = netWork.calculate_loss([input], targets)
+        netWork.train(np.array([input]), targets)  # Train the network
+
+        outputs = netWork.calculate(inputs=input)
+        print(f"model output after: \n{outputs}")
+
+        print('1st convolutional layer, 1st kernel weights:')
+        print(netWork.layers[0].kernels[0][0][0].weights[:-1].reshape((3, 3)))
+        print('1st convolutional layer, 1st kernel bias:')
+        print(np.array([netWork.layers[0].kernels[0][0][0].weights[-1]]))
+
+        print('1st convolutional layer, 2st kernel weights:')
+        print(netWork.layers[0].kernels[1][0][0].weights[:-1].reshape((3, 3)))
+        print('1st convolutional layer, 2st kernel bias:')
+        print(np.array([netWork.layers[0].kernels[1][0][0].weights[-1]]))
+
+        print('2nd convolutional layer, 1st kernel weights:')
+        print(netWork.layers[1].kernels[0][0][0].weights[:-1].reshape((2,3, 3)))
+        print('2nd convolutional layer, 1st kernel bias:')
+        print(np.array([netWork.layers[1].kernels[0][0][0].weights[-1]]))
+
+        print('fully connected layer weights:')
+
+        print(netWork.layers[3].neurons[0].weights[:-1])
+        print('fully connected layer bias:')
+        print(np.array([netWork.layers[3].neurons[0].weights[-1]]))
+
+    elif (example == 3):
+        tensorExample3()
+        l1k1, l1k2, l1b1, l1b2, l3, l3b, input, targets = generateExample3()
+        weights_L1 = np.array([np.concatenate((l1k1.flatten(), l1b1)), np.concatenate((l1k2.flatten(), l1b2))])
+        netWork = NeuralNetwork(input_size=(8, 8), loss_function="square_error",
+                                learning_rate=100, input_channels=1)
+        netWork.addConvLayer(num_kernels=2, kernel_size=3, activation="logistic", weights=weights_L1)
+        netWork.addMaxPoolLayer(kernel_size=2)
+        netWork.addFlattenLayer()
+        weights_L3 = np.array([np.concatenate((l3.flatten(), l3b))])
+        netWork.addFCLayer(num_neurons=1, activation="logistic", weights=weights_L3)
+        outputs = netWork.calculate(inputs=input)
+        print("----------- Custom Model -----------")
+        print(f"model output before:\n{outputs}")
+
+        # Calculate Loss derivative
+        loss_der = netWork.loss_derivative(outputs, targets)
+        loss = netWork.calculate_loss([input], targets)
+        netWork.train(np.array([input]), targets)  # Train the network
+
+        outputs = netWork.calculate(inputs=input)
+        print(f"model output after: \n{outputs}")
+
+        print('1st convolutional layer, 1st kernel weights:')
+        print(netWork.layers[0].kernels[0][0][0].weights[:-1].reshape((3, 3)))
+        print('1st convolutional layer, 1st kernel bias:')
+        print(np.array([netWork.layers[0].kernels[0][0][0].weights[-1]]))
+
+        print('1st convolutional layer, 2st kernel weights:')
+        print(netWork.layers[0].kernels[1][0][0].weights[:-1].reshape((3, 3)))
+        print('1st convolutional layer, 2st kernel bias:')
+        print(np.array([netWork.layers[0].kernels[1][0][0].weights[-1]]))
+
+        print('fully connected layer weights:')
+
+        print(netWork.layers[3].neurons[0].weights[:-1])
+        print('fully connected layer bias:')
+        print(np.array([netWork.layers[3].neurons[0].weights[-1]]))
+
     """
     print(f'Training the `{nn_type}` network on the `{dataset_type}` dataset.')
     # Train the network
