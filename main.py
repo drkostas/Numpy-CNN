@@ -40,7 +40,7 @@ def main():
     dataset_type = args.dataset
     if dataset_type in ('example1', 'example2', 'example3'):
         example_num = int(dataset_type[-1])
-        inputs, output, layers = generateExample(example_num)
+        inputs, targets, layers = generateExample(example_num)
         getTensorExample(example_num)
     else:
         raise ValueError('Invalid dataset type')
@@ -69,7 +69,7 @@ def main():
             netWork.addMaxPoolLayer(kernel_size=layer['kernel_size'])
         elif layer['type'] == 'Dense':
             weights = np.array([np.concatenate((layer['weights'].flatten(), layer['bias']))])
-            netWork.addFCLayer(num_neurons=output.shape[0],
+            netWork.addFCLayer(num_neurons=targets.shape[0],
                                activation=layer['activation'],
                                weights=weights)
         else:
@@ -78,15 +78,66 @@ def main():
     # # Train the network # #
     # First Feed forward
     outputs = netWork.calculate(inputs=inputs)
-    print(f"Initial Output: '{outputs}'\n")
-    # First Loss derivative
-    loss_der = netWork.loss_derivative(outputs, outputs)
-    loss = netWork.calculate_loss(np.array([inputs]), outputs)
-    print(f"Loss derivative: '{loss_der}'\n")
-    # Continue Training
-    netWork.train(np.array([inputs]), outputs)
+    print("----------- Custom Model -----------")
+    print(f"model output before:\n{outputs}")
+
+    # Calculate Loss derivative
+    loss_der = netWork.loss_derivative(outputs, targets)
+    loss = netWork.calculate_loss(np.array([inputs]), targets)
+    netWork.train(np.array([inputs]), targets)  # Train the network
+
     outputs = netWork.calculate(inputs=inputs)
-    print(f"Final Output: '{outputs}'\n")
+    print(f"model output after: \n{outputs}")
+
+    if example_num == 1:
+        print('1st convolutional layer, kernel weights:')
+        print(netWork.layers[0].kernels[0][0][0].weights[:-1].reshape((3, 3)))
+        print('1st convolutional layer, kernel bias:')
+        print(np.array([netWork.layers[0].kernels[0][0][0].weights[-1]]))
+        print('fully connected layer weights:')
+
+        print(netWork.layers[2].neurons[0].weights[:-1])
+        print('fully connected layer bias:')
+        print(np.array([netWork.layers[2].neurons[0].weights[-1]]))
+    elif example_num == 2:
+        print('1st convolutional layer, 1st kernel weights:')
+        print(netWork.layers[0].kernels[0][0][0].weights[:-1].reshape((3, 3)))
+        print('1st convolutional layer, 1st kernel bias:')
+        print(np.array([netWork.layers[0].kernels[0][0][0].weights[-1]]))
+
+        print('1st convolutional layer, 2st kernel weights:')
+        print(netWork.layers[0].kernels[1][0][0].weights[:-1].reshape((3, 3)))
+        print('1st convolutional layer, 2st kernel bias:')
+        print(np.array([netWork.layers[0].kernels[1][0][0].weights[-1]]))
+
+        print('2nd convolutional layer, 1st kernel weights:')
+        print(netWork.layers[1].kernels[0][0][0].weights[:-1].reshape((2, 3, 3)))
+        print('2nd convolutional layer, 1st kernel bias:')
+        print(np.array([netWork.layers[1].kernels[0][0][0].weights[-1]]))
+
+        print('fully connected layer weights:')
+
+        print(netWork.layers[3].neurons[0].weights[:-1])
+        print('fully connected layer bias:')
+        print(np.array([netWork.layers[3].neurons[0].weights[-1]]))
+    elif example_num == 3:
+        print('1st convolutional layer, 1st kernel weights:')
+        print(netWork.layers[0].kernels[0][0][0].weights[:-1].reshape((3, 3)))
+        print('1st convolutional layer, 1st kernel bias:')
+        print(np.array([netWork.layers[0].kernels[0][0][0].weights[-1]]))
+
+        print('1st convolutional layer, 2st kernel weights:')
+        print(netWork.layers[0].kernels[1][0][0].weights[:-1].reshape((3, 3)))
+        print('1st convolutional layer, 2st kernel bias:')
+        print(np.array([netWork.layers[0].kernels[1][0][0].weights[-1]]))
+
+        print('fully connected layer weights:')
+
+        print(netWork.layers[3].neurons[0].weights[:-1])
+        print('fully connected layer bias:')
+        print(np.array([netWork.layers[3].neurons[0].weights[-1]]))
+    else:
+        raise ValueError(f'Invalid example number: {example_num}')
 
 
 if __name__ == '__main__':
@@ -96,15 +147,14 @@ if __name__ == '__main__':
         print(str(e) + '\n' + str(traceback.format_exc()))
         raise e
 
-
- # # First Layer (Convolutional)
- #    weights_L1 = np.array(
- #        [np.concatenate((l1k1.flatten(), l1b1)), np.concatenate((l1k2.flatten(), l1b2))])
- #    netWork.addConvLayer(num_kernels=2, kernel_size=3, activation="logistic", weights=weights_L1)
- #    # Second Layer (Convolutional)
- #    weights_L2 = np.array([np.concatenate((l2c1.flatten(), l2c2.flatten(), l2b))])
- #    netWork.addConvLayer(num_kernels=1, kernel_size=3, activation="logistic", weights=weights_L2)
- #    # Third Layer (Fully Connected)
- #    netWork.addFlattenLayer()
- #    weights_L3 = np.array([np.concatenate((l3.flatten(), l3b))])
- #    netWork.addFCLayer(num_neurons=1, activation="logistic", weights=weights_L3)
+# # First Layer (Convolutional)
+#    weights_L1 = np.array(
+#        [np.concatenate((l1k1.flatten(), l1b1)), np.concatenate((l1k2.flatten(), l1b2))])
+#    netWork.addConvLayer(num_kernels=2, kernel_size=3, activation="logistic", weights=weights_L1)
+#    # Second Layer (Convolutional)
+#    weights_L2 = np.array([np.concatenate((l2c1.flatten(), l2c2.flatten(), l2b))])
+#    netWork.addConvLayer(num_kernels=1, kernel_size=3, activation="logistic", weights=weights_L2)
+#    # Third Layer (Fully Connected)
+#    netWork.addFlattenLayer()
+#    weights_L3 = np.array([np.concatenate((l3.flatten(), l3b))])
+#    netWork.addFCLayer(num_neurons=1, activation="logistic", weights=weights_L3)
