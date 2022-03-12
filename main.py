@@ -1,7 +1,7 @@
 import traceback
 import argparse
 import numpy as np
-from src import NeuralNetwork, generateExample2
+from src import NeuralNetwork, generateExample
 from typing import *
 
 
@@ -19,10 +19,7 @@ def get_args() -> argparse.Namespace:
     required_args = parser.add_argument_group('Required Arguments')
     required_args.add_argument('-d', '--dataset', required=True,
                                help="The datasets to train the network on. "
-                                    "Options: [and, xor, class_example]")
-    required_args.add_argument('-n', '--network', required=True,
-                               help="The network configuration to use. "
-                                    "Options: [1x1_net, 2x1_net, 2x2_net]")
+                                    "Options: [example1, example2, example3]")
     # Optional args
     optional_args = parser.add_argument_group('Optional Arguments')
     optional_args.add_argument("-h", "--help", action="help", help="Show this help message and exit")
@@ -30,156 +27,65 @@ def get_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def get_network_config(network_name: str) -> Dict[str, Any]:
-    """Get the network configuration
-
-    Args:
-        network_name (str): The name of the network to get the configuration for
-
-    Returns:
-        Dict[str, Any]: The network configuration
-    """
-    nn_conf = {}
-    if network_name == '1x1_net':
-        nn_conf['neurons_per_layer'] = [1]
-        nn_conf['activations'] = ['logistic']
-        nn_conf['loss_function'] = 'square_error'
-        nn_conf['learning_rate'] = 5
-        nn_conf['epochs'] = 5000
-        nn_conf['print_every'] = 500
-    elif network_name == '2x1_net':
-        nn_conf['neurons_per_layer'] = [2, 1]
-        nn_conf['activations'] = ['logistic', 'logistic']
-        nn_conf['loss_function'] = 'square_error'
-        nn_conf['learning_rate'] = 5
-        nn_conf['epochs'] = 5000
-        nn_conf['print_every'] = 500
-    elif network_name == '2x2_net':
-        nn_conf['neurons_per_layer'] = [2, 2]
-        nn_conf['activations'] = ['logistic', 'logistic']
-        nn_conf['loss_function'] = 'cross_entropy'
-        nn_conf['learning_rate'] = 0.5
-        nn_conf['epochs'] = 100
-        nn_conf['print_every'] = 100
-    else:
-        raise ValueError(f"Network name {network_name} not recognized.")
-
-    return nn_conf
-
-
-def get_dataset_config(dataset_name: str) -> Dict[str, Any]:
-    """Get the dataset configuration
-
-    Args:
-        dataset_name (str): The name of the dataset to get the configuration for
-
-    Returns:
-        Dict[str, Any]: The dataset configuration
-    """
-    dataset_conf = {}
-    if dataset_name == 'example1':
-        dataset_conf['inputs'] = []
-        dataset_conf['outputs'] = []  # TODO: change me
-    if dataset_name == 'and':
-        dataset_conf['inputs'] = [[0, 0], [0, 1], [1, 0], [1, 1]]
-        dataset_conf['outputs'] = [[0], [0], [0], [1]]
-    elif dataset_name == 'xor':
-        dataset_conf['inputs'] = [[0, 0], [0, 1], [1, 0], [1, 1]]
-        dataset_conf['outputs'] = [[0], [1], [1], [0]]
-    elif dataset_name == 'class_example':
-        dataset_conf['inputs'] = [0.05, 0.1]
-        dataset_conf['desired_outputs'] = [0.01, 0.99]
-        dataset_conf['weights'] = [[[0.15, 0.20, 0.35], [0.25, 0.30, 0.35]],
-                                   [[0.40, 0.45, 0.60], [0.50, 0.55, 0.60]]]
-    else:
-        raise ValueError(f"Dataset name {dataset_name} not recognized.")
-
-    return dataset_conf
-
-
 def main():
     """This is the main function of main.py
 
     Example:
-        python main.py --dataset xor --network 2x1_net
+        python main.py --dataset example1
     """
 
     # Initializing
-    # args = get_args()
+    args = get_args()
     # Load the configurations
-    # nn_type = args.network
-    # nn_conf = get_network_config(nn_type)
-    # dataset_type = args.dataset
-    # dataset_conf = get_dataset_config(dataset_type)
-
-    # netWork = NeuralNetwork(input_size=10, loss_function="cross_entropy",
-    #                         learning_rate=.1, input_channels=1)
-    # netWork.addFCLayer(num_neurons=5, activation="logistic")
-    # netWork.addFCLayer(num_neurons=2, activation="logistic")
-    # tin = np.arange(1, 201).reshape(20, 10)
-    # tout = np.array([[7, 8]])
-    # netWork.train(tin, tout)
-    # import sys
-    # sys.exit()
+    dataset_type = args.dataset
+    if dataset_type in ('example1', 'example2', 'example3'):
+        example_num = int(dataset_type[-1])
+        inputs, output, layers = generateExample(example_num)
+    else:
+        raise ValueError('Invalid dataset type')
 
     # ------- Start of Code ------- #
-    # l1k1, l1k2, l1b1, l1b2, l2c1, l2c2, l2b, l3, l3b, input, output = generateExample2()
-    l1k1, l1k2, l1b1, l1b2, l2c1, l2c2, l2b, l3, l3b, input, targets = generateExample2()
-    weights_L1 = np.array([np.concatenate((l1k1.flatten(),l1b1)),np.concatenate((l1k2.flatten(),l1b2))])
-    netWork = NeuralNetwork(input_size=(7, 7), loss_function="square_error",
+    # # Initialize the network # #
+    netWork = NeuralNetwork(input_size=inputs.shape, loss_function="square_error",
                             learning_rate=100, input_channels=1)
-    netWork.addConvLayer(num_kernels=2, kernel_size=3, activation="logistic",weights=weights_L1)
-    weights_L2 = np.array([np.concatenate((l2c1.flatten(),l2c2.flatten(), l2b))])
-    netWork.addConvLayer(num_kernels=1, kernel_size=3, activation="logistic",weights=weights_L2)
-    netWork.addFlattenLayer()
-    weights_L3 = np.array([np.concatenate((l3.flatten(),l3b))])
-    netWork.addFCLayer(num_neurons=1, activation="logistic",weights=weights_L3)
-    outputs = netWork.calculate(inputs=input)
+    # Add layers
+    for layer in layers:
+        if layer['type'] == 'Conv':
+            weights = []
+            for k_ind in range(layer['num_kernels']):
+                kernels = [k_w.flatten() for k_w in layer['weights'][k_ind]]
+                kernel_weights = np.concatenate((*kernels,
+                                                 layer['biases'][k_ind]))
+                weights.append(kernel_weights)
+            weights = np.array(weights)
+            netWork.addConvLayer(num_kernels=layer['num_kernels'],
+                                 kernel_size=layer['kernel_size'],
+                                 activation=layer['activation'],
+                                 weights=weights)
+        elif layer['type'] == 'Flat':
+            netWork.addFlattenLayer()
+        elif layer['type'] == 'MaxPool':
+            netWork.addMaxPoolLayer(kernel_size=layer['kernel_size'])
+        elif layer['type'] == 'Dense':
+            weights = np.array([np.concatenate((layer['weights'].flatten(), layer['bias']))])
+            netWork.addFCLayer(num_neurons=output.shape[0],
+                               activation=layer['activation'],
+                               weights=weights)
+        else:
+            raise ValueError(f'Invalid layer type: {layer["type"]}')
+
+    # # Train the network # #
+    # First Feed forward
+    outputs = netWork.calculate(inputs=inputs)
     print(f"Initial Output: '{outputs}'\n")
-
-    # Calculate Loss derivative
-    loss_der = netWork.loss_derivative(outputs, targets)
-    loss = netWork.calculate_loss([input],targets)
-    print(loss_der)
-    # # Calculate the derivative of the activation
-
-    # act_der = np.array([neuron.activation_derivative()
-    #                     for neuron in netWork.layers[-1].neurons]) \
-    #             .reshape(loss_der.shape)
-    ##wdeltas = np.array([loss_der])
-    ##print(wdeltas)
-    ##wdeltas = netWork.layers[-1].calculate_wdeltas(wdeltas)
-    ##print(wdeltas)
-    netWork.train(np.array([input]), targets)  # Train the network
-
-    outputs = netWork.calculate(inputs=input)
+    # First Loss derivative
+    loss_der = netWork.loss_derivative(outputs, outputs)
+    loss = netWork.calculate_loss(np.array([inputs]), outputs)
+    print(f"Loss derivative: '{loss_der}'\n")
+    # Continue Training
+    netWork.train(np.array([inputs]), outputs)
+    outputs = netWork.calculate(inputs=inputs)
     print(f"Final Output: '{outputs}'\n")
-    # loss = netWork.calculate_loss(inputs, targets)  # Calculate the loss
-    """
-    print(f'Training the `{nn_type}` network on the `{dataset_type}` dataset.')
-    # Train the network
-    inputs = np.array(dataset_conf['inputs'])
-    outputs = np.array(dataset_conf['outputs'])
-    # Initialize the network
-    # Initialize the network
-    netWork = NeuralNetwork(num_inputs=inputs.shape[1],
-                            loss_function=nn_conf['loss_function'],
-                            learning_rate=nn_conf['learning_rate'])
-    # Add the layers
-    for num_neurons, activation in zip(nn_conf['neurons_per_layer'], nn_conf['activations']):
-        netWork.addLayer(num_neurons=num_neurons, activation=activation)
-    # Train the network for the given number of epochs
-    for epoch in range(nn_conf['epochs']):
-        netWork.train(inputs, outputs)  # Train the network
-        loss = netWork.calculate_loss(inputs, outputs)  # Calculate the loss
-        if epoch % nn_conf['print_every'] == 0:
-            print(f"Epoch: {epoch} Loss: {loss}")
-    print(f"Epoch: {nn_conf['epochs']} Loss: {loss}")
-    # Test on the predictions
-    print(f'Predictions on the {dataset_type} dataset')
-    for inp, outp in zip(inputs, outputs):
-        print(f"True Output: {outp} Prediction: {netWork.calculate(inp)[0]}")
-        """
 
 
 if __name__ == '__main__':
@@ -188,3 +94,16 @@ if __name__ == '__main__':
     except Exception as e:
         print(str(e) + '\n' + str(traceback.format_exc()))
         raise e
+
+
+ # # First Layer (Convolutional)
+ #    weights_L1 = np.array(
+ #        [np.concatenate((l1k1.flatten(), l1b1)), np.concatenate((l1k2.flatten(), l1b2))])
+ #    netWork.addConvLayer(num_kernels=2, kernel_size=3, activation="logistic", weights=weights_L1)
+ #    # Second Layer (Convolutional)
+ #    weights_L2 = np.array([np.concatenate((l2c1.flatten(), l2c2.flatten(), l2b))])
+ #    netWork.addConvLayer(num_kernels=1, kernel_size=3, activation="logistic", weights=weights_L2)
+ #    # Third Layer (Fully Connected)
+ #    netWork.addFlattenLayer()
+ #    weights_L3 = np.array([np.concatenate((l3.flatten(), l3b))])
+ #    netWork.addFCLayer(num_neurons=1, activation="logistic", weights=weights_L3)

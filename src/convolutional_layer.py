@@ -80,26 +80,28 @@ class ConvolutionalLayer:
         :param wdeltas_next: Weight deltas of the next layer
         :return: Weight deltas of the layer
         """
-        #wdeltas_next = wdeltas_next[0]
+        # wdeltas_next = wdeltas_next[0]
         wdeltas = np.zeros((self.input_channels, *self.input_dimensions))
 
         for k in range(self.num_kernels):
             wdelta_next_k = wdeltas_next[k]
-            flattenedIndex = 0
             dedw = np.zeros(len(self.kernels[k][0][0].weights))
             for i in range(len(self.kernels[k])):
                 for j in range(len(self.kernels[k])):
-                    wdelta_next_k[i,j] = wdelta_next_k[i,j]*self.kernels[k][i][j].activation_derivative()
-                    dedw = dedw +self.kernels[k][i][j].inputs*wdelta_next_k[i,j]
+                    wdelta_next_k[i, j] = wdelta_next_k[i, j] * self.kernels[k][i][
+                        j].activation_derivative()
+                    dedw = dedw + self.kernels[k][i][j].inputs * wdelta_next_k[i, j]
 
-                    wdeltas[:,i:(i+3),j:(j+3)] = wdeltas[:,i:(i+3),j:(j+3)] + \
-                                                 wdelta_next_k[i,j]*(self.kernels[k][i][j].inputs[:-1].reshape(\
-                                                 self.input_channels,self.kernel_size,self.kernel_size))
+                    wdeltas[:, i:(i + 3), j:(j + 3)] = wdeltas[:, i:(i + 3), j:(j + 3)] + \
+                                                       wdelta_next_k[i, j] * \
+                                                       (self.kernels[k][i][j].inputs[:-1]
+                                                        .reshape(self.input_channels,
+                                                                 self.kernel_size,
+                                                                 self.kernel_size))
             index = 0
             for i in range(len(self.kernels[k])):
                 for j in range(len(self.kernels[k])):
                     self.kernels[k][i][j].partial_der = dedw
                     self.kernels[k][i][j].update_weights()
-                    index = index+1
+                    index = index + 1
         return wdeltas
-

@@ -82,7 +82,7 @@ class Neuron:
         """ Calculates and saves the partial derivative with respect to the weights. """
         delta = deltaw_1 * self.activation_derivative()
         self.derivative(delta)
-        delta_w = delta * self.weights[:-1]
+        delta_w = delta * self.weights[:-1]  # Exclude the bias
         return delta_w
 
     def update_weights(self):

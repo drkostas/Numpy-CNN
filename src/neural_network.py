@@ -76,7 +76,7 @@ class NeuralNetwork:
             input_height, input_width = self.layers[-1].output_size
             input_channels = self.layers[-1].output_channels
         if weights is None:
-            weights = np.random.randn(num_kernels, (kernel_size** 2)*input_channels + 1)
+            weights = np.random.randn(num_kernels, (kernel_size ** 2) * input_channels + 1)
         layer = ConvolutionalLayer(num_kernels=num_kernels, kernel_size=kernel_size,
                                    input_channels=input_channels,
                                    input_dimensions=(input_height, input_width),
@@ -230,7 +230,7 @@ class NeuralNetwork:
         :return: The derivative of the mean squared loss of the network.
         """
         # TODO: change this to 1/N*(y-y') ? (equivalent change to square_error_loss change)
-        return  2*(np.array(outputs) - np.array(targets)) / np.array(outputs).shape[0]
+        return 2 * (np.array(outputs) - np.array(targets)) / np.array(outputs).shape[0]
 
     def train(self, inputs: np.ndarray, targets: np.ndarray) -> None:
         """
