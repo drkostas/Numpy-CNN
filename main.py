@@ -1,7 +1,7 @@
 import traceback
 import argparse
 import numpy as np
-from src import NeuralNetwork, generateExample
+from src import NeuralNetwork, generateExample, getTensorExample
 from typing import *
 
 
@@ -41,6 +41,7 @@ def main():
     if dataset_type in ('example1', 'example2', 'example3'):
         example_num = int(dataset_type[-1])
         inputs, output, layers = generateExample(example_num)
+        getTensorExample(example_num)
     else:
         raise ValueError('Invalid dataset type')
 
