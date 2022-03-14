@@ -86,7 +86,7 @@ directly.
 
 ```ShellSession
 $ python main.py -h
-usage: main.py -d DATASET -n NETWORK [-h]
+usage: main.py -d DATASET [-h]
 
 Project 2 for the Deep Learning class (COSC 525). Involves the development 
 of a Convolutional Neural Network.
