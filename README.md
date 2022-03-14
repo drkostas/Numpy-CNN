@@ -34,8 +34,8 @@ These instructions will get you a copy of the project up and running on your loc
 You need to have a machine with Python > 3.6 and any Bash based shell (e.g. zsh) installed.
 
 ```ShellSession
-$ python3.8 -V
-Python 3.8.2
+$ python3.7 -V
+Python 3.7
 
 $ echo $SHELL
 /usr/bin/zsh
@@ -50,8 +50,9 @@ Then, to create a conda environment, install the requirements, setup the library
 execute the following commands:
 
 ```ShellSession
-$ make install
+$ make create_env
 $ conda activate cosc525_project2
+$ make requirements
 ```
 
 ### Manual Installations <a name = "installing_manually"></a>
@@ -60,9 +61,9 @@ For manual installation, you can create a virtual environment
 and install the requirements by executing the following commands:
 
 ```ShellSession
-$ conda create -n cosc525_project2 -y python=3.8 # or $ make create_env
+$ conda create -n cosc525_project2 -y python=3.7
 $ conda activate cosc525_project2
-$ conda install --file requirements.txt # or $ make requirements
+$ conda install --file requirements.txt -y
 ```
 
 ## Running the code <a name = "run_locally"></a>
@@ -87,13 +88,12 @@ directly.
 $ python main.py -h
 usage: main.py -d DATASET -n NETWORK [-h]
 
-Project 2 for the Deep Learning class (COSC 525). Involves the development of a Convolutional Neural Network.
+Project 2 for the Deep Learning class (COSC 525). Involves the development 
+of a Convolutional Neural Network.
 
 Required Arguments:
   -d DATASET, --dataset DATASET
-                        The datasets to train the network on. Options: [and, xor, class_example]
-  -n NETWORK, --network NETWORK
-                        The network configuration to use. Options: [1x1_net, 2x1_net, 2x2_net]
+                        The datasets to train the network on. Options: [example1, example2, example3]
 
 Optional Arguments:
   -h, --help            Show this help message and exit

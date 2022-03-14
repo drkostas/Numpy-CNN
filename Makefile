@@ -70,7 +70,7 @@ setup_dev:
 	$(BIN)/pip install setuptools
 	$(BIN)/python setup.py install --dev
 requirements:
-	$(BIN)/pip install -r requirements.txt
+	conda install --file requirements.txt -y
 clean:
 	$(BIN)/python setup.py clean
 create_env:
