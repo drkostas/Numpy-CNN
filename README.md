@@ -1,3 +1,5 @@
+![Numpy-CNN](docs/images/banner.png)
+
 # COSC525: Project 2: Convolutional Neural Networks
 
 [![GitHub license](https://img.shields.io/badge/license-Apache-blue.svg)](

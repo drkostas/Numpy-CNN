@@ -1,0 +1,20 @@
+kind: banner
+name: Numpy-CNN
+line: A convolutional neural network written with NumPy only, with no deep learning
+  library.
+accent: clay
+diagram:
+- panes:
+    rows: 2
+    cols: 2
+    highlight:
+    - 0
+    - 1
+    label: image
+- arrow
+- box:
+    text: conv layer
+    accent: true
+- arrow
+- box:
+    text: output
